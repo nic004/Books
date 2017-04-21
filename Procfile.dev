@@ -1,0 +1,2 @@
+dev-server: npm run dev-server
+client: npm run dev

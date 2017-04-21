@@ -4,8 +4,10 @@
   "description": "Starter for Express, React, Redux, SCSS applications",
   "scripts": {
     "dev": "webpack-dev-server --watch --colors",
+    "dev-server": "NODE_ENV=development PORT=8080 ./nodemon ./server/server.js",
+    "dev-all": "foreman start -f Procfile.dev",
     "build": "rimraf dist && NODE_ENV=production webpack --colors",
-    "start": "NODE_ENV=production PORT=8080 pm2 start ./server.js",
+    "start": "NODE_ENV=production PORT=8080 pm2 start ./server/server.js",
     "test": "mocha --compilers js:babel-core/register --require ./test/test_helper.js --recursive ./test",
     "test:watch": "npm run test -- --watch",
     "lint": "eslint src test webpack"
@@ -59,12 +61,18 @@
     "webpack-dev-server": "^1.14.1"
   },
   "dependencies": {
+    "body-parser": "^1.17.1",
     "express": "^4.13.4",
     "highlight.js": "^9.11.0",
+    "nodemon": "^1.11.0",
     "react": "^15.0.2",
     "react-dom": "^15.0.2",
     "react-redux": "^5.0.2",
     "react-router": "^3.0.2",
-    "redux": "^3.5.2"
+    "redux": "^3.5.2",
+    "sequelize": "^3.30.4",
+    "sequelize-cli": "^2.7.0",
+    "sqlite3": "^3.1.8",
+    "whatwg-fetch": "^2.0.3"
   }
 }

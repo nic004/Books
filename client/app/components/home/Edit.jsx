@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import API from 'books/Api.jsx';
+import {post} from 'books/utils/Utils.jsx';
 
 export default class Edit extends Component {
   constructor(props) {
@@ -21,7 +23,7 @@ export default class Edit extends Component {
       }
       sentences.push(m[0]);
     }
-    console.log(sentences);
+    // console.log(sentences);
   }
 
   onChange(e) {
@@ -31,8 +33,12 @@ export default class Edit extends Component {
   }
 
   onSubmit(e) {
-    console.log('An essay was submitted: ' + this.state.value);
     e.preventDefault();
+    API.postParagraphs(this.state.value, () => {
+      console.log('success');
+    }, (error) => {
+      console.log(error);
+    });
   }
 
   render() {
