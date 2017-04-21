@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import hljs from 'highlight';
 import 'highlight/styles/atom-one-light.css';
 
-export default class CouponBox extends Component {
+export default class Home extends Component {
   componentDidMount() {
     hljs.initHighlightingOnLoad();
   }

@@ -9,6 +9,7 @@ import './components/bundle.scss';
 import App from './components/App';
 import Home from './components/home/Home';
 import About from './components/about/About';
+import Edit from './components/home/Edit';
 
 import reducers from './reducers';
 
@@ -21,6 +22,7 @@ ReactDOM.render(
       <Route path="/" component={App}>
         <IndexRoute component={Home} />;
         <Route path="/about" component={About} />
+        <Route path="/edit" component={Edit} />
       </Route>
     </Router>
   </Provider>
