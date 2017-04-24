@@ -1,10 +1,5 @@
 'use strict';
 module.exports = {
-  classMethods: {
-    associate: function(models) {
-      Paragraphs.hasMany(models.Setence);
-    }
-  },
   up: function(queryInterface, Sequelize) {
     return queryInterface.createTable('Paragraphs', {
       id: {
@@ -13,9 +8,16 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      code: {
+        type: Sequelize.STRING
+      },
       comment: {
         type: Sequelize.STRING
       },
+      type: {
+        allowNull: false,
+        type: Sequelize.STRING
+      }, 
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

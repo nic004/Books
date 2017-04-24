@@ -1,15 +1,5 @@
 'use strict';
 module.exports = {
-  classMethods: {
-    associate: function(models) {
-      Sentences.belongsTo(models.Paragraph, {
-        onDelete: "CASCADE",
-        foreignKey: {
-          allowNull: false
-        }
-      });
-    }
-  },
   up: function(queryInterface, Sequelize) {
     return queryInterface.createTable('Sentences', {
       id: {
@@ -28,6 +18,15 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
+      },
+      ParagraphId: {
+        type: Sequelize.INTEGER,
+        onDelete: "CASCADE",
+        allowNull: false,
+        references: {
+          model: 'Paragraphs',
+          key: 'id'
+        }
       }
     });
   },

@@ -2,9 +2,9 @@ import {post} from 'books/utils/Utils.jsx';
 
 class Api {
 
-  postParagraphs(content, success, failure) {
+  postParagraphs(paragraphs, success, failure) {
     const data = {
-      content: content
+      paragraphs: paragraphs
     };
 
     post(`${Api.baseUrl}/paragraphs`, data)
