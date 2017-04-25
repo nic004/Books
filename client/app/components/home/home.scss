@@ -4,6 +4,13 @@ div.home {
     max-width: 1024px;
     margin-left: auto;
     margin-right: auto;
+
+    p.paragraph {
+      line-height: 1.8em;
+      span.sentence:not(:first-child) {
+        margin-left: 0.5em;
+      }
+    }
   }
 
   pre {

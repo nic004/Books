@@ -1,4 +1,4 @@
-import {post} from 'books/utils/Utils.jsx';
+import {get, post} from 'books/utils/Utils.jsx';
 
 class Api {
 
@@ -8,6 +8,13 @@ class Api {
     };
 
     post(`${Api.baseUrl}/paragraphs`, data)
+      .then(success)
+      .catch(failure);
+  }
+
+  getParagraphs(success, failure) {
+    fetch(`${Api.baseUrl}/paragraphs`)
+      .then((response) => response.json())
       .then(success)
       .catch(failure);
   }
