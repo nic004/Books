@@ -25,32 +25,22 @@ router.post('/', (req, res) => {
   //   console.log(ps);
   //   res.end();
   // });
-  // paragraphs.forEach((ps) => {
-    const ps = paragraphs[0];
-    models.Paragraph.create(ps, { include: [models.Sentence] }).then((p) => {
-      console.log(p);
-    }).catch((errors) => {
-      console.log(errors);
+  paragraphs.forEach((ps, index) => {
+    models.Paragraph.create(ps).then((p) => {
+      let sentences = ps.sentences;
+      sentences.forEach((s) => {
+        s.ParagraphId = p.id;
+      });
+
+      const isLast = index == paragraphs.length - 1;
+      models.Sentence.bulkCreate(sentences).then((ss) => {
+        // console.log(ss);
+        if (isLast) {
+          res.end();
+        }
+      });
     });
-  // });
-
-
-  // const Paragraph = models.Paragraph;
-  // Paragraph.findAll().then((res) => {
-    // console.log(res);
-  // });
-
-  // const regex = /\S[^.!?]+[.!?]"?/g
-  // const str = req.body.content;
-  // let sentences = [];
-
-  // let m;
-  // while ((m = regex.exec(str)) !== null) {
-  //   if (m.index === regex.lastIndex) {
-  //     regex.lastIndex++;
-  //   }
-  //   sentences.push(m[0]);
-  // }
+  });
 
   // return res.json({sentences: sentences});
   // return res.end();
