@@ -7,8 +7,13 @@ div.home {
 
     p.paragraph {
       line-height: 1.8em;
-      span.sentence:not(:first-child) {
-        margin-left: 0.5em;
+      span.sentence {
+        &:not(:first-child) {
+          margin-left: 0.5em;
+        }
+        &:hover {
+          font-size: 1.5em;
+        }
       }
     }
   }
