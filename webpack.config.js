@@ -19,7 +19,8 @@ var webpackConfig = {
     alias: {
       'books': Path.resolve('./client/app/'),
       'highlight': Path.resolve('./node_modules/highlight.js'),
-      'whatwg-fetch': Path.resolve('./node_modules/whatwg-fetch')
+      'whatwg-fetch': Path.resolve('./node_modules/whatwg-fetch'),
+      'react-key-handler': Path.resolve('./node_modules/react-key-handler')
     }
   },
   plugins: [

@@ -11,7 +11,7 @@ div.home {
         &:not(:first-child) {
           margin-left: 0.5em;
         }
-        &:hover {
+        &.has-focus {
           font-size: 1.5em;
         }
       }

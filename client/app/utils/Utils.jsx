@@ -51,4 +51,8 @@ const del = function (input, bodyJson, init) {
   return post(input, bodyJson, options);
 }
 
-export { wfetch as fetch, head, post, put, del };
+  const isBlankString = function (str) {
+    return (!str || /^\s*$/.test(str));
+  }
+
+export { wfetch as fetch, head, post, put, del, isBlankString };
