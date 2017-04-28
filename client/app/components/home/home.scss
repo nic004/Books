@@ -5,14 +5,39 @@ div.home {
     margin-left: auto;
     margin-right: auto;
 
-    p.paragraph {
+    div.paragraph {
       line-height: 1.8em;
-      span.sentence {
+      &:not(:first-child) {
+        margin-top: 1em;
+      }
+
+      div.sentence {
+        display: inline;
         &:not(:first-child) {
           margin-left: 0.5em;
         }
         &.has-focus {
           font-size: 1.5em;
+        }
+        &.edit {
+          display: block;
+        }
+
+        form.edit-sentence-comment {
+          margin: 0.5em 0;
+          background-color: $gray-bg-color;
+          padding: 0.5em;
+          textarea {
+            width: 100%;
+            height: 4em;
+            border: 2px solid $stroke-color;
+            border-radius: 0.2em;
+            border-style: dashed;
+            padding: 1em;
+            outline: none;
+            font-size: 0.5em;
+            color: $gray-text-color;
+          }
         }
       }
     }

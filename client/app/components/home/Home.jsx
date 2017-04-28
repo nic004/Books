@@ -64,11 +64,7 @@ export default class Home extends Component {
     return this.components.paragraphs[index[0]].sentences[index[1]];
   }
 
-  onKeyUp(e) {
-    if (!this.components || Object.keys(this.components.paragraphs).length <= 0) {
-      return;
-    }
-
+  moveFocus(e) {
     let handled = false;
     let prevFocused = null;
     if (e.key === 'h') {  
@@ -92,16 +88,32 @@ export default class Home extends Component {
       }
     }
 
-    this.focusedSentence.setFocus(true);
-    if (prevFocused) {
-      prevFocused.setFocus(false);
-    }
-
     if (handled) {
+      this.focusedSentence.setFocus(true);
+      if (prevFocused) {
+        prevFocused.setFocus(false);
+      }
+
       console.log(this.focusedSentence);
       console.log(e);
       e.stopPropagation();
       e.preventDefault();
+    }
+
+    return handled;
+  }
+
+  onKeyUp(e) {
+    if (!this.components || Object.keys(this.components.paragraphs).length <= 0) {
+      return;
+    }
+
+    if (this.moveFocus(e)) {
+      return;
+    }
+
+    if (e.key === 'o' && this.focusedSentence && !this.focusedSentence.isEditMode()) {
+      this.focusedSentence.edit();
     }
   }
 
@@ -114,11 +126,11 @@ export default class Home extends Component {
               if (p.type === 'PLAIN') {
                 if (p.Sentences) {
                   return (
-                    <p className='paragraph' key={index}>
+                    <div className='paragraph' key={index}>
                       {p.Sentences.map((s, si) => {
                         return <Sentence key={si} sentence={s} ref={this.addSentenceComponent.bind(this, index, si)} />
                       })}
-                    </p>
+                    </div>
                   );
                 }
               } else if (p.type === 'CODE') {
