@@ -44,7 +44,7 @@ export default class Edit extends Component {
       if (p === 'CODE') {
         return {type: 'CODE', code: codes[codeIndex++]};
       }
-      const sentences = this.groups(p, /\S[^.]*[\.:]/g).map((s) => {return {text: s}});
+      const sentences = this.groups(p, /\S[^\.:\?]*[\.:\?]/g).map((s) => {return {text: s}});
       return {type: 'PLAIN', sentences: sentences};
     });
 

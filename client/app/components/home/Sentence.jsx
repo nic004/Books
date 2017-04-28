@@ -18,9 +18,9 @@ export default class Sentence extends Component {
     this.setState({hasFocus: hasFocus, editMode: false});
   }
 
-  edit() {
-    this.setState({editMode: true}, () => {
-      if (this.textarea) {
+  edit(toEdit) {
+    this.setState({editMode: toEdit}, () => {
+      if (toEdit && this.textarea) {
         this.textarea.focus();
       }
     });

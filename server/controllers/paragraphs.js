@@ -5,8 +5,12 @@ const models = require('../models');
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  models.Paragraph.findAll({include: [{model: models.Sentence}]})
+  models.Paragraph.findAll({include: [{model: models.Sentence}], order: ['Paragraph.id', 'Sentences.id']})
   .then((paragraphs) => {
+    paragraphs.forEach((p) => { console.log(
+      p.Sentences.map((s) => { return {id: s.id, t: s.text} })); 
+    })
+    // console.log(paragraphs);
     res.json({paragraphs: paragraphs});
   });
 });

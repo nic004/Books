@@ -108,12 +108,19 @@ export default class Home extends Component {
       return;
     }
 
+    if (this.focusedSentence && this.focusedSentence.isEditMode()) {
+      if (e.key === 'Escape') {
+        this.focusedSentence.edit(false);
+      }
+      return;
+    }
+
     if (this.moveFocus(e)) {
       return;
     }
 
     if (e.key === 'o' && this.focusedSentence && !this.focusedSentence.isEditMode()) {
-      this.focusedSentence.edit();
+      this.focusedSentence.edit(true);
     }
   }
 
