@@ -7,7 +7,7 @@ export default class Sentence extends Component {
     this.state = {
       hasFocus: false,
       editMode: false,
-      comment: ''
+      comment: props.sentence.comment || ''
     }
   }
 
@@ -40,6 +40,11 @@ export default class Sentence extends Component {
   }
 
   onSubmit(e) {
+    API.postSentenceComment(this.props.sentence.id, this.state.comment, () => {
+      console.log('success');
+    }, (error) => {
+      console.log(error);
+    });
   }
 
   render() {

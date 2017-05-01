@@ -1,7 +1,8 @@
 'use strict';
 module.exports = function(sequelize, DataTypes) {
   var Sentence = sequelize.define('Sentence', {
-    text: DataTypes.STRING
+    text: DataTypes.STRING,
+    comment: DataTypes.STRING
   }, {
     classMethods: {
       associate: function(models) {

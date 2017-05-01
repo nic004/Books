@@ -19,6 +19,16 @@ class Api {
       .catch(failure);
   }
 
+  postSentenceComment(id, comment, success, failure) {
+    const data = {
+      comment: comment 
+    };
+
+    post(`${Api.baseUrl}/sentences/${id}/comment`, data)
+      .then(success)
+      .catch(failure);
+  }
+
 }
 
 Api.baseUrl = 'http://localhost:8080/api';

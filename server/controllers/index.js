@@ -3,6 +3,7 @@ var express = require('express'),
     path = require('path');
 
 router.use('/api/paragraphs', require('./paragraphs'));
+router.use('/api/sentences', require('./sentences'));
 
 router.get('*', (req, res) => {
   const indexHtml = path.resolve(__dirname + '/../../dist/index.html');
