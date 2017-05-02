@@ -138,6 +138,24 @@ export default class Home extends Component {
     return handled;
   }
 
+  translateParagraph(e) {
+
+    if (!this.focusedSentence) {
+      return false;
+    }
+    
+    // if (e.ctrlKey && e.keyCode == 67) { // ctrl+c
+    if (e.ctrlKey && e.keyCode == 84) { // ctrl+t
+      const currentParagraph = this.focusedSentence.paragraph;
+      const currentSentences = Object.keys(currentParagraph.sentences).map((sk) => currentParagraph.sentences[sk]);
+      const paragraphText = currentSentences.map((s) => s.text()).join(' ');
+      const translateUri = `https://translate.google.com/?sl#en/ko/${paragraphText}`;
+      window.open(encodeURI(translateUri), 'GoogleTranslate');
+      return true;
+    }
+    return false;
+  }
+
   onKeyUp(e) {
     if (!this.components || Object.keys(this.components.paragraphs).length <= 0) {
       return;
@@ -147,6 +165,10 @@ export default class Home extends Component {
       if (e.key === 'Escape') {
         this.focusedSentence.edit(false);
       }
+      return;
+    }
+
+    if (this.translateParagraph(e)) {
       return;
     }
 

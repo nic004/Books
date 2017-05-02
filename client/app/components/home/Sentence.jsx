@@ -1,4 +1,5 @@
 import React, {Component, PropTypes} from 'react';
+import {fetch} from 'books/utils/Utils.jsx';
 import API from 'books/Api.jsx';
 
 export default class Sentence extends Component {
@@ -40,6 +41,10 @@ export default class Sentence extends Component {
   }
 
   onKeyDown(e) {
+    // if (e.nativeEvent.ctrlKey && e.nativeEvent.keyCode === 84) {
+    //   this.translateFromGoogle();
+    //   return;
+    // }
     if (e.nativeEvent.shiftKey && e.nativeEvent.keyCode === 13) {
       e.nativeEvent.preventDefault();
       this.submit();
