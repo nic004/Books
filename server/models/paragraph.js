@@ -9,6 +9,12 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         // associations can be defined here
         models.Paragraph.hasMany(models.Sentence);
+        models.Paragraph.belongsTo(models.Document, {
+          onDelete: "CASCADE",
+          foreignKey: {
+            allowNull: false
+          }
+        });
       }
     }
   });
