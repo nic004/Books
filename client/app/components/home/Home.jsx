@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
+import update from 'react-addons-update';
 import API from 'books/Api.jsx';
-import {isBlankString} from 'books/utils/Utils.jsx';
+import {isBlankString, checkInViewport} from 'books/utils/Utils.jsx';
 import hljs from 'highlight';
 import 'highlight/styles/atom-one-light.css';
+import scrollToElement from 'scroll-to-element';
 import Sentence from './Sentence.jsx';
 
 export default class Home extends Component {
@@ -12,6 +14,7 @@ export default class Home extends Component {
       value: '',
       paragraphs: [],
     }
+    this.componentConstructed = false;
     this.keyUpHandler = this.onKeyUp.bind(this);
   }
 
@@ -21,7 +24,7 @@ export default class Home extends Component {
       this.components = {paragraphs: {}};
       this.setState({paragraphs: response.paragraphs}, () => {
         this.makeTree();
-        console.log(this.components);
+        this.componentConstructed = true;
         const blocks = document.querySelectorAll('pre code');
         blocks.forEach((b) => { hljs.highlightBlock(b) });
       });
@@ -33,7 +36,7 @@ export default class Home extends Component {
   }
 
   addSentenceComponent(pi, si, s) {
-    if (isBlankString(s.text())) {
+    if (this.componentConstructed || !s || isBlankString(s.text())) {
       return;
     }
 
@@ -45,16 +48,24 @@ export default class Home extends Component {
   } 
 
   makeTree() {
+    let currentParagraph = null;
     let currentSentence = null;
     Object.keys(this.components.paragraphs).sort((a, b) => a - b).forEach((pk) => {
       const p = this.components.paragraphs[pk];
+      if (currentParagraph) {
+        currentParagraph.next = p;
+        p.prev = currentParagraph;
+      }
+      currentParagraph = p;
+
       Object.keys(p.sentences).sort((a, b) => a - b).forEach((sk) => {
-        console.log(`${pk} - ${sk}`);
+        // console.log(`${pk} - ${sk}`);
         const s = p.sentences[sk];
         if (currentSentence) {
           currentSentence.next = s;
           s.prev = currentSentence;
         } 
+        s.paragraph = p;
         currentSentence = s;
       });
     });
@@ -87,15 +98,39 @@ export default class Home extends Component {
         this.focusedSentence = this.focusedSentence.next;
       }
     }
+    else if (e.key === 'j') {
+      handled = true;
+      if (!this.focusedSentence) {
+        this.focusedSentence = this.sentenceComponent([0, 0]);
+      } else {
+        const nextParagraph = this.focusedSentence.paragraph.next;
+        if (nextParagraph) {
+          prevFocused = this.focusedSentence;
+          this.focusedSentence = nextParagraph.sentences[0];
+        }
+      }
+    }
+    else if (e.key === 'k') {
+      handled = true;
+      const prevParagraph = this.focusedSentence.paragraph.prev;
+      if (prevParagraph) {
+        prevFocused = this.focusedSentence;
+        this.focusedSentence = prevParagraph.sentences[0];
+      }
+    }
 
     if (handled) {
-      this.focusedSentence.setFocus(true);
       if (prevFocused) {
         prevFocused.setFocus(false);
       }
 
-      console.log(this.focusedSentence);
-      console.log(e);
+      this.focusedSentence.setFocus(true, () => {
+        const fse = document.querySelector('div.sentence.has-focus');
+        if (!checkInViewport(fse)) {
+          scrollToElement(fse, {duration: 500});
+        }
+      });
+
       e.stopPropagation();
       e.preventDefault();
     }
@@ -124,6 +159,42 @@ export default class Home extends Component {
     }
   }
 
+  onMouseEnter(e) {
+    const current = [...document.querySelectorAll('div.paragraph.mouse-over')];
+    current.forEach((p) => {
+      p.classList.remove('mouse-over');
+    });
+    e.target.classList.add('mouse-over');
+  }
+
+  // onMouseLeave(e) {
+  //   e.target.classList.remove('mouse-over');
+  // }
+
+  sentenceIndex(sentence) {
+    const pIndex = this.state.paragraphs.findIndex((p) => p.id === sentence.ParagraphId);
+    const sIndex = this.state.paragraphs[pIndex].Sentences.findIndex((s) => s.id == sentence.id);
+    return {paragraph: pIndex, sentence: sIndex};
+  }
+
+  didUpdateSentence(sentence) {
+    const index = this.sentenceIndex(sentence);
+    const newParagraphs = update(this.state.paragraphs, {[index.paragraph]: {Sentences: {[index.sentence]: {$set: sentence}}}});
+    this.setState({paragraphs: newParagraphs});
+  }
+
+  onClickSentence(sentence) {
+    const index = this.sentenceIndex(sentence);
+    const targetSentenceComponent = this.components.paragraphs[index.paragraph].sentences[index.sentence];
+    if (targetSentenceComponent) {
+      if (this.focusedSentence) {
+        this.focusedSentence.setFocus(false);
+      }
+      this.focusedSentence = targetSentenceComponent;
+      this.focusedSentence.setFocus(true);
+    }
+  }
+
   render() {
     return (
       <div className="container home">
@@ -133,10 +204,11 @@ export default class Home extends Component {
               if (p.type === 'PLAIN') {
                 if (p.Sentences) {
                   return (
-                    <div className='paragraph' key={index}>
+                    <div className='paragraph' key={index} onMouseEnter={this.onMouseEnter.bind(this)} >
                       {p.Sentences.map((s, si) => {
-                        return <Sentence key={si} sentence={s} ref={this.addSentenceComponent.bind(this, index, si)} />
+                        return <Sentence key={si} sentence={s} ref={this.addSentenceComponent.bind(this, index, si)} didUpdateSentence={this.didUpdateSentence.bind(this)} onClickSentence={this.onClickSentence.bind(this)} />
                       })}
+                      <div className="sentence-comments">{p.Sentences.map((s) => `${s.comment || ''} `)}</div>
                     </div>
                   );
                 }

@@ -25,6 +25,7 @@ class Api {
     };
 
     post(`${Api.baseUrl}/sentences/${id}/comment`, data)
+      .then((response) => response.json())
       .then(success)
       .catch(failure);
   }

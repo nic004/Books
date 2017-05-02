@@ -17,8 +17,12 @@ const router = express.Router();
 
 router.post('/:id/comment', (req, res) => {
   const c = req.body.comment;
-  models.Sentence.update({comment: c}, {fields: ['comment'], where: {id: req.params.id}}).then((s) => {
-    res.end();
+  const sentenceId = req.params.id;
+  models.Sentence.update({comment: c}, {fields: ['comment'], where: {id: sentenceId}}).then((r) => {
+    console.log(r);
+    models.Sentence.findById(sentenceId).then((s) => {
+      res.json({sentence: s});
+    });
   });
 });
 

@@ -20,7 +20,9 @@ var webpackConfig = {
       'books': Path.resolve('./client/app/'),
       'highlight': Path.resolve('./node_modules/highlight.js'),
       'whatwg-fetch': Path.resolve('./node_modules/whatwg-fetch'),
-      'react-key-handler': Path.resolve('./node_modules/react-key-handler')
+      'scroll-to-element': Path.resolve('./node_modules/scroll-to-element'),
+      'react-key-handler': Path.resolve('./node_modules/react-key-handler'),
+      'react-addons-update': Path.resolve('./node_modules/react-addons-update')
     }
   },
   plugins: [

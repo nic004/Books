@@ -51,8 +51,22 @@ const del = function (input, bodyJson, init) {
   return post(input, bodyJson, options);
 }
 
-  const isBlankString = function (str) {
-    return (!str || /^\s*$/.test(str));
-  }
+const isBlankString = function (str) {
+  return (!str || /^\s*$/.test(str));
+}
 
-export { wfetch as fetch, head, post, put, del, isBlankString };
+
+const offset = function (el) {
+    var rect = el.getBoundingClientRect(),
+    scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
+    scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    return { top: rect.top + scrollTop, left: rect.left + scrollLeft }
+}
+
+const checkInViewport = function (elm) {
+  var rect = elm.getBoundingClientRect();
+  var viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight);
+  return !(rect.bottom < 0 || rect.top - viewHeight >= 0);
+}
+
+export { wfetch as fetch, head, post, put, del, isBlankString, offset, checkInViewport };

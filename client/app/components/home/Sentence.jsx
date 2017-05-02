@@ -14,8 +14,8 @@ export default class Sentence extends Component {
   componentDidMount() {
   }
 
-  setFocus(hasFocus) {
-    this.setState({hasFocus: hasFocus, editMode: false});
+  setFocus(hasFocus, then) {
+    this.setState({hasFocus: hasFocus, editMode: false}, then);
   }
 
   edit(toEdit) {
@@ -36,25 +36,53 @@ export default class Sentence extends Component {
 
   onChange(e) {
     const value = e.target.value;
-    this.setState({comment: value});
+    this.setState({ comment: value });
+  }
+
+  onKeyDown(e) {
+    if (e.nativeEvent.shiftKey && e.nativeEvent.keyCode === 13) {
+      e.nativeEvent.preventDefault();
+      this.submit();
+    }
   }
 
   onSubmit(e) {
-    API.postSentenceComment(this.props.sentence.id, this.state.comment, () => {
-      console.log('success');
+    this.submit();
+  }
+
+  submit() {
+    this.edit(false);
+    API.postSentenceComment(this.props.sentence.id, this.state.comment, (response) => {
+      this.props.didUpdateSentence(response.sentence);
     }, (error) => {
       console.log(error);
     });
   }
 
+  onMouseEnter(e) {
+    e.target.classList.add('mouse-over');
+  }
+
+  onMouseLeave(e) {
+    e.target.classList.remove('mouse-over');
+  }
+
+  onClick(e) {
+    this.props.onClickSentence(this.props.sentence);
+  }
+
   render() {
     return (
-      <div className={`sentence ${this.state.hasFocus ? 'has-focus' : ''} ${this.state.editMode ? 'edit' : ''}`}>
+      <div className={`sentence ${this.state.hasFocus ? 'has-focus' : ''} ${this.state.editMode ? 'edit' : ''}`} 
+           onMouseEnter={this.onMouseEnter.bind(this)} onMouseLeave={this.onMouseLeave.bind(this)} onClick={this.onClick.bind(this)}>
+
         {this.props.sentence.text}
+
+        {!this.state.editMode && this.state.hasFocus && this.props.sentence.comment ? <div className="sentence-comment">{this.props.sentence.comment}</div> :null}
 
         {this.state.editMode ? 
           <form onSubmit={this.onSubmit.bind(this)} className="edit-sentence-comment">
-            <textarea value={this.state.comment} onChange={this.onChange.bind(this)} ref={(c) => this.textarea = c} />
+            <textarea value={this.state.comment} onChange={this.onChange.bind(this)} ref={(c) => this.textarea = c} onKeyDown={this.onKeyDown.bind(this)} />
             <input type="submit" value="Submit" />
           </form> : null
         }
@@ -64,5 +92,7 @@ export default class Sentence extends Component {
 }
 
 Sentence.propTypes = {
-  sentence: PropTypes.object.isRequired
+  sentence: PropTypes.object.isRequired,
+  didUpdateSentence: PropTypes.func.isRequired,
+  onClickSentence: PropTypes.func.isRequired
 };

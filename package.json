@@ -66,6 +66,7 @@
     "highlight.js": "^9.11.0",
     "nodemon": "^1.11.0",
     "react": "^15.0.2",
+    "react-addons-update": "^15.5.2",
     "react-dom": "^15.0.2",
     "react-redux": "^5.0.2",
     "react-router": "^3.0.2",
