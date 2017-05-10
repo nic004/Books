@@ -1,6 +1,33 @@
-import {get, post} from 'books/utils/Utils.jsx';
+import {get, post, put} from 'books/utils/Utils.jsx';
 
 class Api {
+  getDocuments(success, failure) {
+    fetch(`${Api.baseUrl}/documents`)
+      .then((response) => response.json())
+      .then(success)
+      .catch(failure);
+  }
+
+  postDocuments(title, success, failure) {
+    const data = {
+      title: title
+    };
+
+    post(`${Api.baseUrl}/documents`, data)
+      .then(success)
+      .catch(failure);
+  }
+
+  putDocuments(id, title, success, failure) {
+    const data = {
+      id: id,
+      title: title
+    };
+
+    put(`${Api.baseUrl}/documents`, data)
+      .then(success)
+      .catch(failure);
+  }
 
   postParagraphs(paragraphs, success, failure) {
     const data = {

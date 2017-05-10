@@ -7,6 +7,7 @@ import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 import './components/bundle.scss';
 
 import App from './components/App';
+import Documents from './components/home/Documents';
 import Home from './components/home/Home';
 import About from './components/about/About';
 import Edit from './components/home/Edit';
@@ -20,7 +21,8 @@ ReactDOM.render(
   <Provider store={store}>
     <Router onUpdate={() => window.scrollTo(0, 0)} history={browserHistory}>
       <Route path="/" component={App}>
-        <IndexRoute component={Home} />;
+        <IndexRoute component={Documents} />;
+        <Route path="/home" component={Home} />
         <Route path="/about" component={About} />
         <Route path="/edit" component={Edit} />
       </Route>
