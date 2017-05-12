@@ -1,4 +1,23 @@
-div.home {
+div.paragraphs {
+  section.tools {
+    max-width: 1024px;
+    margin-left: auto;
+    margin-right: auto;
+    height: 30px;
+    p.tools {
+      float: right;
+      display: inline-block;
+      border: 1px solid $stroke-color;
+      border-radius: 3px;
+      // padding: 0.5em;
+      padding: 0.5em 1.5em;
+      font-size: 0.8em;
+      a:hover {
+        text-decoration: underline
+        
+      }
+    }
+  }
 
   div.content {
     max-width: 1024px;

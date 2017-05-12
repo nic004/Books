@@ -39,8 +39,8 @@ class Api {
       .catch(failure);
   }
 
-  getParagraphs(success, failure) {
-    fetch(`${Api.baseUrl}/paragraphs`)
+  getParagraphs(documentId, success, failure) {
+    fetch(`${Api.baseUrl}/paragraphs?documentId=${documentId}`)
       .then((response) => response.json())
       .then(success)
       .catch(failure);

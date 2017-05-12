@@ -1,0 +1,78 @@
+div.documents {
+  max-width: 1024px;
+  margin-left: auto;
+  margin-right: auto;
+  ul.document-list {
+    list-style: none;
+    li.document {
+      form.edit-document-title {
+        // input
+        input.title {
+          width: 100%;
+          border: 2px solid $stroke-color;
+          border-style: dashed;
+          padding: 0.5em;
+          outline: none;
+          font-size: 1em;
+          color: $document-title-color;
+          &::placeholder {
+            color: $stroke-color;
+          }
+        }
+      }
+      div.title {
+        p.title {
+          a {
+            color: $document-title-color;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-decoration: none;
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
+        p.info {
+          margin-top: 0.3em;
+          color: $gray-text-color;
+          a.edit {
+            cursor: pointer;
+            margin-left: 0.5em;
+            &:hover {
+              font-weight: bold;
+            }
+          }
+        }
+      }
+    }
+    li.document + li.document {
+      margin-top: 1em;
+    }
+  }
+
+  form.new-document {
+    margin-top: 2em;
+    border-top: 1px solid $stroke-color;
+    padding-top: 2em;
+    input.new-document-title {
+      width: 100%;
+      border: 2px solid $stroke-color;
+      border-style: dashed;
+      padding: 0.5em;
+      outline: none;
+      font-size: 1em;
+      color: $document-title-color;
+      &::placeholder {
+        color: $stroke-color;
+      }
+    }
+  }
+
+  form {
+    p.tip {
+      color: $stroke-color;
+      margin-top: 0.25em;
+    }
+  }
+
+}

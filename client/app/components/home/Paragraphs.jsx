@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {Link} from 'react-router';
 import update from 'react-addons-update';
 import API from 'books/Api.jsx';
 import {isBlankString, checkInViewport} from 'books/utils/Utils.jsx';
@@ -7,7 +8,7 @@ import 'highlight/styles/atom-one-light.css';
 import scrollToElement from 'scroll-to-element';
 import Sentence from './Sentence.jsx';
 
-export default class Home extends Component {
+export default class Paragraphs extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -20,7 +21,7 @@ export default class Home extends Component {
 
   componentDidMount() {
     document.body.addEventListener("keyup", this.keyUpHandler);
-    API.getParagraphs((response) => {
+    API.getParagraphs(this.props.location.query.documentId, (response) => {
       this.components = {paragraphs: {}};
       this.setState({paragraphs: response.paragraphs}, () => {
         this.makeTree();
@@ -219,7 +220,12 @@ export default class Home extends Component {
 
   render() {
     return (
-      <div className="container home">
+      <div className="container paragraphs">
+        <section className='tools'>
+          <p className='tools'>
+            <Link to={`paragraphs/append?documentId=${this.props.location.query.documentId}`}>본문추가</Link>
+          </p>
+        </section>
         <div className="content">
           {
             this.state.paragraphs.map((p, index) => {

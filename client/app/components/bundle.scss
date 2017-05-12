@@ -1,6 +1,9 @@
+@import './common/base/normalize';
+@import './common/base/mixins';
 @import './common/base/variables';
 @import './common/base/global';
 @import './common/header';
-@import './home/home';
 @import './about/about';
-@import './home/edit';
+@import './home/Documents';
+@import './home/Paragraphs';
+@import './home/AppendParagraphs';

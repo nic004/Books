@@ -4,7 +4,7 @@ import {post} from 'books/utils/Utils.jsx';
 import hljs from 'highlight';
 import 'highlight/styles/atom-one-light.css';
 
-export default class Edit extends Component {
+export default class AppendParagraphs extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -32,6 +32,7 @@ export default class Edit extends Component {
 
   onChange(e) {
     const value = e.target.value;
+    const documentId = this.props.location.query.documentId;
 
     // const regexCode = /{code}\n*((.|\n)+)\n*{\/code}/g;
     const regexCode = /{code}([\s\S]*?){\/code}/g;
@@ -42,10 +43,10 @@ export default class Edit extends Component {
     let codeIndex = 0;
     const paragraphs = paragraphRaws.map((p) => { 
       if (p === 'CODE') {
-        return {type: 'CODE', code: codes[codeIndex++]};
+        return {type: 'CODE', code: codes[codeIndex++], DocumentId: documentId};
       }
       const sentences = this.groups(p, /\S[^\.:\?]*[\.:\?]/g).map((s) => {return {text: s}});
-      return {type: 'PLAIN', sentences: sentences};
+      return {type: 'PLAIN', sentences: sentences, DocumentId: documentId};
     });
 
     this.setState({value: e.target.value, paragraphs: paragraphs}, () => {
@@ -58,8 +59,9 @@ export default class Edit extends Component {
     e.preventDefault();
     console.log(this.state.paragraphs);
     API.postParagraphs(this.state.paragraphs, () => {
-      console.log('success');
+      this.props.router.push(`paragraphs?documentId=${this.props.location.query.documentId}`);
     }, (error) => {
+      alert('데이터 저장 중 에러가 발생하였습니다.');
       console.log(error);
     });
   }
@@ -82,7 +84,7 @@ export default class Edit extends Component {
   render() {
     let codeIndex = 0;
     return (
-      <div className='edit-chapter'>
+      <div className='append-paragraphs'>
         <div className='preview'>
           {
             this.state.paragraphs ? this.state.paragraphs.map((p, i) => {

@@ -9,7 +9,7 @@ module.exports = {
         onDelete: "CASCADE",
         allowNull: true,
         references: {
-          model: 'Document',
+          model: 'Documents',
           key: 'id'
         }
       }

@@ -1,9 +1,10 @@
-
 import React, {Component} from 'react';
+import {Link} from 'react-router';
 import API from 'books/Api.jsx';
 import {post} from 'books/utils/Utils.jsx';
 import hljs from 'highlight';
 import 'highlight/styles/atom-one-light.css';
+import dateFormat from 'dateformat';
 
 export default class Documents extends Component {
   constructor(props) {
@@ -30,6 +31,21 @@ export default class Documents extends Component {
     const value = e.target.value;
     this.setState({newDocumentTitle: e.target.value});
   }
+  
+  onCancel() {
+    this.setState({newDocumentTitle: ''});
+  }
+
+  onTitleKeyDown(e) {
+    if (e.nativeEvent.shiftKey && e.nativeEvent.keyCode === 13) {
+      e.nativeEvent.preventDefault();
+      this.onSubmit();
+    }
+    else if (e.nativeEvent.keyCode === 27) {
+      e.nativeEvent.preventDefault();
+      this.onCancel();
+    }
+  }
 
   onSubmit(e) {
     e.preventDefault();
@@ -42,8 +58,17 @@ export default class Documents extends Component {
     });
   }
 
-  onChangeTitle(e) {
-    this.setState({editDocumentTitle: e.target.value});
+
+
+  onChangeTitleKeyDown(e) {
+    if (e.nativeEvent.shiftKey && e.nativeEvent.keyCode === 13) {
+      e.nativeEvent.preventDefault();
+      this.onUpdate();
+    }
+    else if (e.nativeEvent.keyCode === 27) {
+      e.nativeEvent.preventDefault();
+      this.onCancelDocumentEdit();
+    }
   }
 
   onUpdate(e) {
@@ -57,9 +82,18 @@ export default class Documents extends Component {
     });
   }
 
+  onChangeTitle(e) {
+    this.setState({editDocumentTitle: e.target.value});
+  }
+
   onEditDocument(document, e) {
     this.setState({editDocumentId: document.id, editDocumentTitle: document.title});
   }
+
+  onCancelDocumentEdit(e) {
+    this.setState({editDocumentId: null, editDocumentTitle: null});
+  }
+
 
   render() {
     let codeIndex = 0;
@@ -69,16 +103,38 @@ export default class Documents extends Component {
           {
             this.state.documents.map((d) => 
               <li key={d.id} className='document'>
-                {this.state.editDocumentId === d.id ? <form onSubmit={this.onUpdate.bind(this)}><input type="text" onChange={this.onChangeTitle.bind(this)} value={this.state.editDocumentTitle || ''} /></form> : d.title}
-                {this.state.editDocumentId === d.id ? null : <a onClick={this.onEditDocument.bind(this, d)}>EDIT</a>}
+                {this.state.editDocumentId === d.id ? 
+                  <form className='edit-document-title' onSubmit={this.onUpdate.bind(this)}>
+                    <input type="text" className='title' 
+                      onKeyDown={this.onChangeTitleKeyDown.bind(this)} 
+                      onChange={this.onChangeTitle.bind(this)} 
+                      value={this.state.editDocumentTitle || ''} 
+                      placeholder='document title' />
+                    <p className='tip'>enter - 완료, esc - 취소</p>
+                  </form> 
+                  : 
+                  <div className='title'>
+                    <p className='title'><Link to={`paragraphs?documentId=${d.id}`}>{d.title}</Link></p>
+                    <p className='info'>
+                      <span className='updated-at'>{dateFormat(d.updatedAt, 'yyyy-mm-dd HH:MM')}</span>
+                      <a className='edit' onClick={this.onEditDocument.bind(this, d)}>EDIT</a>
+                    </p>
+                  </div>
+                 }
               </li>
             )
           }
         </ul>
 
-        <form onSubmit={this.onSubmit.bind(this)}>
-          <textarea value={this.state.newDocumentTitle} onChange={this.onChange.bind(this)} />
-          <input type="submit" value="Add" />
+        <form onSubmit={this.onSubmit.bind(this)} className='new-document'>
+          <input className='new-document-title' 
+                 type="text" 
+                 onChange={this.onChange.bind(this)} 
+                 value={this.state.newDocumentTitle || ''}  
+                 onKeyDown={this.onTitleKeyDown.bind(this)} 
+                 placeholder='document title'
+          />
+          <p className='tip'>enter - 완료, esc - 취소</p>
         </form>
       </div>
     );

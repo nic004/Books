@@ -8,9 +8,9 @@ import './components/bundle.scss';
 
 import App from './components/App';
 import Documents from './components/home/Documents';
-import Home from './components/home/Home';
+import Paragraphs from './components/home/Paragraphs';
+import AppendParagraphs from './components/home/AppendParagraphs';
 import About from './components/about/About';
-import Edit from './components/home/Edit';
 
 import reducers from './reducers';
 
@@ -22,9 +22,9 @@ ReactDOM.render(
     <Router onUpdate={() => window.scrollTo(0, 0)} history={browserHistory}>
       <Route path="/" component={App}>
         <IndexRoute component={Documents} />;
-        <Route path="/home" component={Home} />
+        <Route path="/paragraphs" component={Paragraphs} />
+        <Route path="/paragraphs/append" component={AppendParagraphs} />
         <Route path="/about" component={About} />
-        <Route path="/edit" component={Edit} />
       </Route>
     </Router>
   </Provider>

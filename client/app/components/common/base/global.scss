@@ -5,8 +5,16 @@ body {
   padding: 0;
   font-family: 'Nunito', sans-serif;
   font-size: 16px;
-  div, form, textarea {
+  div, form, textarea, input {
     box-sizing: border-box;
+  }
+  p, ul {
+    margin: 0;
+    padding: 0;
+  }
+  a {
+    color: black;
+    text-decoration: none;
   }
 }
 
