@@ -46,6 +46,13 @@ class Api {
       .catch(failure);
   }
 
+  getParagraph(paragraphId, success, failure) {
+    fetch(`${Api.baseUrl}/paragraphs/${paragraphId}`)
+      .then((response) => response.json())
+      .then(success)
+      .catch(failure);
+  }
+
   postSentenceComment(id, comment, success, failure) {
     const data = {
       comment: comment 

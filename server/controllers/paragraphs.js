@@ -11,6 +11,14 @@ router.get('/', (req, res) => {
   });
 });
 
+router.get('/:id', (req, res) => {
+  models.Paragraph.findAll({where: {id: req.params.id}, include: [{model: models.Sentence}], order: ['Paragraph.id', 'Sentences.id']})
+  .then((paragraphs) => {
+    res.json(paragraphs[0]);
+  });
+});
+
+
 router.post('/', (req, res) => {
   const paragraphs = req.body.paragraphs;
   paragraphs.forEach((ps, index) => {

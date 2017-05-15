@@ -42,7 +42,7 @@ export default class Paragraphs extends Component {
     }
 
     if (!this.components.paragraphs[pi]) {
-      this.components.paragraphs[pi] = {sentences: {}};
+      this.components.paragraphs[pi] = {index: pi, sentences: {}};
     }
     let p = this.components.paragraphs[pi];
     p.sentences[si] = s;
@@ -140,7 +140,6 @@ export default class Paragraphs extends Component {
   }
 
   translateParagraph(e) {
-
     if (!this.focusedSentence) {
       return false;
     }
@@ -152,6 +151,20 @@ export default class Paragraphs extends Component {
       const paragraphText = currentSentences.map((s) => s.text()).join(' ');
       const translateUri = `https://translate.google.com/?sl#en/ko/${paragraphText}`;
       window.open(encodeURI(translateUri), 'GoogleTranslate');
+      return true;
+    }
+    return false;
+  }
+
+  editParagraph(e) {
+    if (!this.focusedSentence) {
+      return false;
+    }
+    
+    if (e.ctrlKey && e.keyCode == 69) { // ctrl+e
+      const currentParagraphObject = this.focusedSentence.paragraph;
+      const currentParagraph = this.state.paragraphs[currentParagraphObject.index]
+      this.props.router.push(`paragraphs/${currentParagraph.id}/edit`);
       return true;
     }
     return false;
@@ -170,6 +183,10 @@ export default class Paragraphs extends Component {
     }
 
     if (this.translateParagraph(e)) {
+      return;
+    }
+
+    if (this.editParagraph(e)) {
       return;
     }
 
