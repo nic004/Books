@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import {Router, browserHistory} from 'react-router';
+import update from 'react-addons-update';
 import API from 'books/Api.jsx';
 import hljs from 'highlight';
 import 'highlight/styles/atom-one-light.css';
@@ -18,12 +20,25 @@ export default class EditParagraph extends Component {
     });
   }
 
-  onSave() {
-
+  onSave(e) {
+    e.preventDefault();
+    API.putParagraph(this.state.paragraph, () => {
+      this.props.router.push(`paragraphs?documentId=${this.state.paragraph.DocumentId}`);
+    });
   }
 
   onCancel() {
+    browserHistory.goBack();
+  }
 
+  onChange(index, sentence, key, e) {
+    const p = update(this.state.paragraph, {Sentences: {[index]: {[key]: {$set: e.target.value}}}});
+    this.setState({paragraph: p});
+  }
+
+  onNewSentence() {
+    const p = update(this.state.paragraph, {Sentences: {$push: [{text: null, comment: null}]}});
+    this.setState({paragraph: p});
   }
 
   render() {
@@ -33,20 +48,23 @@ export default class EditParagraph extends Component {
           {!this.state.paragraph ? null :
             <div className='sentences'>
               {
-                this.state.paragraph.Sentences.map((s) => {
+                this.state.paragraph.Sentences.map((s, index) => {
                   return (
-                    <div className='sentence-info' key={s.id}>
-                      <textarea className='input-sentence' type='text' value={s.text} />
-                      <textarea className='input-sentence-comment' type='text' value={s.comment || ''} />
+                    <div className='sentence-info' key={index}>
+                      <textarea className='input-sentence' type='text' onChange={this.onChange.bind(this, index, s, 'text')} value={s.text || ''} />
+                      <textarea className='input-sentence-comment' type='text' onChange={this.onChange.bind(this, index, s, 'comment')} value={s.comment || ''} />
                     </div>
                   );
                 })
               }
+              <div className='new-sentence'>
+                <a onClick={this.onNewSentence.bind(this)} className='new-sentence'>ADD</a> 
+              </div>
             </div>
           }
           <div className='buttons'>
-            <a className='cancel' onClick={this.onCancel.bind(this)}>취소</a>
-            <input type='submit' value='저장' />
+            <a className='button cancel' onClick={this.onCancel.bind(this)}>취소</a>
+            <a className='button submit' onClick={this.onSave.bind(this)}>저장</a>
           </div>
         </form>
       </div>

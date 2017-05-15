@@ -41,4 +41,32 @@ router.post('/', (req, res) => {
   });
 });
 
+router.put('/', (req, res) => {
+  const paragraph = req.body.paragraph;
+  models.Paragraph.findById(paragraph.id).then((p) => {
+    p.update({comment: paragraph.comment}).then(() => {
+      paragraph.Sentences.forEach((sentence, index) => {
+        const doOnLast = () => {
+          if (index == paragraph.Sentences.length - 1) {
+            res.end();
+          }
+        };
+        if (!sentence['id']) {
+          sentence.ParagraphId = paragraph.id;
+          models.Sentence.create(sentence).then(doOnLast);
+        } else {
+          models.Sentence.findById(sentence.id).then((s) => {
+            if (!sentence.text && !sentence.comment) {
+              s.destroy().then(doOnLast)
+            } else {
+              s.update({ text: sentence.text, comment: sentence.comment }).then(doOnLast);
+            }
+          });
+        }
+      });
+    });
+  });
+});
+
+
 module.exports = router;

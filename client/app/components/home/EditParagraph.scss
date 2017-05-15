@@ -18,5 +18,35 @@ div.edit-paragraph {
         margin-top: 0.5em;
       }
     }
+    div.new-sentence {
+      text-align: center;
+      border: 1px solid $stroke-color;
+      border-radius: 5px;
+      border-style: dashed;
+      padding: 0.5em;
+      a {
+        cursor: pointer;
+        &:hover {
+          font-weight: bold;
+        }
+      }
+    }
+  }
+
+  div.buttons {
+    margin-top: 2em;
+    text-align: center;
+    a.button {
+      padding: 0.3em 2em;
+      border: 1px solid $stroke-color;
+      box-sizing: border-box;
+      cursor: pointer;
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.03);
+      }
+    }
+    a.button + a.button {
+      margin-left: 1em;
+    }
   }
 }

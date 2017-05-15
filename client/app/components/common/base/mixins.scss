@@ -1,0 +1,13 @@
+@mixin clear-system-button-style {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border: none;
+  border-radius: initial;
+  background-color: initial;
+  display: block;
+  padding: 0px;
+  box-sizing: border-box;
+  text-align: center;
+  width: 100%;
+}

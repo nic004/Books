@@ -39,6 +39,16 @@ class Api {
       .catch(failure);
   }
 
+  putParagraph(paragraph, success, failure) {
+    const data = {
+      paragraph: paragraph
+    };
+
+    put(`${Api.baseUrl}/paragraphs`, data)
+      .then(success)
+      .catch(failure);
+  }
+
   getParagraphs(documentId, success, failure) {
     fetch(`${Api.baseUrl}/paragraphs?documentId=${documentId}`)
       .then((response) => response.json())
