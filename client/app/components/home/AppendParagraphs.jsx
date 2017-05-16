@@ -35,7 +35,7 @@ export default class AppendParagraphs extends Component {
     const documentId = this.props.location.query.documentId;
 
     // const regexCode = /{code}\n*((.|\n)+)\n*{\/code}/g;
-    const regexCode = /{code}([\s\S]*?){\/code}/g;
+    const regexCode = /{code}\n*([\s\S]*?){\/code}/g;
     const codes = this.groups(value, regexCode, 1, false);
 
     const codeReplaced = value.replace(regexCode, "CODE");
