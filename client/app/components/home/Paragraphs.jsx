@@ -14,6 +14,7 @@ export default class Paragraphs extends Component {
     this.state = {
       value: '',
       paragraphs: [],
+      commentEditingParagraphIndex: -1,
     }
     this.componentConstructed = false;
     this.keyUpHandler = this.onKeyUp.bind(this);
@@ -113,6 +114,9 @@ export default class Paragraphs extends Component {
     }
     else if (e.key === 'k') {
       handled = true;
+      if (!this.focusedSentence || !this.focusedSentence.prev) {
+        return;
+      }        
       const prevParagraph = this.focusedSentence.paragraph.prev;
       if (prevParagraph) {
         prevFocused = this.focusedSentence;
@@ -175,6 +179,13 @@ export default class Paragraphs extends Component {
       return;
     }
 
+    if (this.state.commentEditingParagraphIndex >= 0) {
+      if (e.key === 'Escape') {
+        this.setState({commentEditingParagraphIndex: -1});
+      }
+      return;
+    }
+
     if (this.focusedSentence && this.focusedSentence.isEditMode()) {
       if (e.key === 'Escape') {
         this.focusedSentence.edit(false);
@@ -194,9 +205,18 @@ export default class Paragraphs extends Component {
       return;
     }
 
-    if (e.key === 'o' && this.focusedSentence && !this.focusedSentence.isEditMode()) {
-      this.focusedSentence.edit(true);
+    if (this.focusedSentence && !this.focusedSentence.isEditMode()) {
+      if (e.key === 'i') {
+        this.setState({commentEditingParagraphIndex: this.focusedSentence.paragraph.index}, () => {
+          if (this.paragraphCommentTextarea) {
+            this.paragraphCommentTextarea.focus();
+          }
+        });
+      } else if (e.key === 'o') {
+        this.focusedSentence.edit(true);
+      }
     }
+
   }
 
   onMouseEnter(e) {
@@ -235,6 +255,31 @@ export default class Paragraphs extends Component {
     }
   }
 
+  onCommentSubmit(e) {
+    if (e) {
+      e.preventDefault();
+    }
+
+    const paragraph = this.state.paragraphs[this.state.commentEditingParagraphIndex];
+    API.putParagraph(paragraph, () => {
+      console.log('paragraph saved ...');
+      this.setState({commentEditingParagraphIndex: -1});
+    });
+  }
+
+  onCommentChange(e) {
+    const value = e.target.value;
+    const paragraphs = update(this.state.paragraphs, {[this.state.commentEditingParagraphIndex]: {comment: {$set: value}}});
+    this.setState({paragraphs: paragraphs});
+  }
+
+  onCommentKeyDown(e) {
+    if (e.nativeEvent.shiftKey && e.nativeEvent.keyCode === 13) {
+      e.nativeEvent.preventDefault();
+      this.onCommentSubmit();
+    }
+  }
+
   render() {
     return (
       <div className="container paragraphs">
@@ -253,7 +298,17 @@ export default class Paragraphs extends Component {
                       {p.Sentences.map((s, si) => {
                         return <Sentence key={si} sentence={s} ref={this.addSentenceComponent.bind(this, index, si)} didUpdateSentence={this.didUpdateSentence.bind(this)} onClickSentence={this.onClickSentence.bind(this)} />
                       })}
+
+                      {this.state.commentEditingParagraphIndex === index ?
+                        <form onSubmit={this.onCommentSubmit.bind(this)} className="edit-paragraph-comment">
+                          <textarea value={p.comment || ''} onChange={this.onCommentChange.bind(this)} ref={(c) => this.paragraphCommentTextarea = c} onKeyDown={this.onCommentKeyDown.bind(this)} />
+                          <input type="submit" value="Submit" />
+                        </form> : null
+                      }
+
                       <div className="sentence-comments">{p.Sentences.map((s) => `${s.comment || ''} `)}</div>
+
+                      {p.comment ? <div className="paragraph-comments">{p.comment}</div> : null}
                     </div>
                   );
                 }

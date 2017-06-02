@@ -40,6 +40,23 @@ div.paragraphs {
         pointer-events: none;
       }
 
+      form.edit-sentence-comment, form.edit-paragraph-comment {
+        margin: 0.5em 0;
+        background-color: $gray-bg-color;
+        padding: 0.5em;
+        textarea {
+          width: 100%;
+          height: 4em;
+          border: 2px solid $stroke-color;
+          border-radius: 0.2em;
+          border-style: dashed;
+          padding: 1em;
+          outline: none;
+          font-size: 16px;
+          color: $gray-text-color;
+        }
+      }
+
       div.sentence {
         display: inline;
         &:not(:first-child) {
@@ -67,28 +84,14 @@ div.paragraphs {
           background-color: white;
           color: chocolate;
         }
-
-        form.edit-sentence-comment {
-          margin: 0.5em 0;
-          background-color: $gray-bg-color;
-          padding: 0.5em;
-          textarea {
-            width: 100%;
-            height: 4em;
-            border: 2px solid $stroke-color;
-            border-radius: 0.2em;
-            border-style: dashed;
-            padding: 1em;
-            outline: none;
-            font-size: 0.7em;
-            color: $gray-text-color;
-          }
-        }
       }
 
-      div.sentence-comments {
+      div.sentence-comments, div.paragraph-comments {
         margin-top: 0.3em;
         color: cornflowerblue;
+        &.paragraph-comments {
+          color: brown;
+        }
       }
     }
   }
