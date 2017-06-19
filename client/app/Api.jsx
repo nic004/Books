@@ -1,4 +1,4 @@
-import {get, post, put} from 'books/utils/Utils.jsx';
+import {get, post, put, del} from 'books/utils/Utils.jsx';
 
 class Api {
   getDocuments(success, failure) {
@@ -61,6 +61,12 @@ class Api {
       .then((response) => response.json())
       .then(success)
       .catch(failure);
+  }
+
+  deleteParagraph(paragraphId, success, failure) {
+    del(`${Api.baseUrl}/paragraphs/${paragraphId}`)
+      .then(success)
+      .catch(failure)
   }
 
   postSentenceComment(id, comment, success, failure) {

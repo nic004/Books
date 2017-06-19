@@ -68,5 +68,12 @@ router.put('/', (req, res) => {
   });
 });
 
+router.delete('/:id', (req, res) => {
+  models.Paragraph.findById(req.params.id).then((p) => {
+    return p.destroy();
+  }).then(() => {
+    res.end();
+  });
+});
 
 module.exports = router;

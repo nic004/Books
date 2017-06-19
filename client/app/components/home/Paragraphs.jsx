@@ -22,6 +22,10 @@ export default class Paragraphs extends Component {
 
   componentDidMount() {
     document.body.addEventListener("keyup", this.keyUpHandler);
+    this.load();
+  }
+
+  load() {
     API.getParagraphs(this.props.location.query.documentId, (response) => {
       this.components = {paragraphs: {}};
       this.setState({paragraphs: response.paragraphs}, () => {
@@ -174,6 +178,23 @@ export default class Paragraphs extends Component {
     return false;
   }
 
+  deleteParagraph(e) {
+    if (!this.focusedSentence) {
+      return false;
+    }
+    
+    if (e.ctrlKey && e.keyCode == 68) { // ctrl+d
+      const currentParagraphObject = this.focusedSentence.paragraph;
+      const currentParagraph = this.state.paragraphs[currentParagraphObject.index]
+      API.deleteParagraph(currentParagraph.id, () => {
+        this.componentConstructed = false;
+        this.load();
+      });
+      return true;
+    }
+    return false;
+  }
+
   onKeyUp(e) {
     if (!this.components || Object.keys(this.components.paragraphs).length <= 0) {
       return;
@@ -198,6 +219,10 @@ export default class Paragraphs extends Component {
     }
 
     if (this.editParagraph(e)) {
+      return;
+    }
+
+    if (this.deleteParagraph(e)) {
       return;
     }
 
