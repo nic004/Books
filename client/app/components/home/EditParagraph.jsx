@@ -23,7 +23,7 @@ export default class EditParagraph extends Component {
   onSave(e) {
     e.preventDefault();
     API.putParagraph(this.state.paragraph, () => {
-      this.props.router.push(`paragraphs?documentId=${this.state.paragraph.DocumentId}`);
+      browserHistory.push(`/paragraphs?documentId=${this.state.paragraph.DocumentId}`);
     });
   }
 
@@ -41,12 +41,20 @@ export default class EditParagraph extends Component {
     this.setState({paragraph: p});
   }
 
+  onChangeCode(e) {
+    const p = update(this.state.paragraph, {code: {$set: e.target.value}});
+    this.setState({paragraph: p});
+  }
+
   render() {
     return (
       <div className='edit-paragraph'>
         <form onSubmit={this.onSave.bind(this)}>
           {!this.state.paragraph ? null :
             <div className='sentences'>
+              <div className='sentence-info'>
+                <textarea className='input-code' type='text' onChange={this.onChangeCode.bind(this)} value={this.state.paragraph.code || ''} />
+              </div>
               {
                 this.state.paragraph.Sentences.map((s, index) => {
                   return (

@@ -44,7 +44,10 @@ router.post('/', (req, res) => {
 router.put('/', (req, res) => {
   const paragraph = req.body.paragraph;
   models.Paragraph.findById(paragraph.id).then((p) => {
-    p.update({comment: paragraph.comment}).then(() => {
+    p.update({comment: paragraph.comment, code: paragraph.code, type: paragraph.code ? 'CODE' : 'PLAIN'}).then(() => {
+      if (!paragraph.Sentences || paragraph.Sentences.length <= 0) {
+        res.end();
+      }
       paragraph.Sentences.forEach((sentence, index) => {
         const doOnLast = () => {
           if (index == paragraph.Sentences.length - 1) {

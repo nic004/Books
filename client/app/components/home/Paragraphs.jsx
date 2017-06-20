@@ -184,6 +184,9 @@ export default class Paragraphs extends Component {
     }
     
     if (e.ctrlKey && e.keyCode == 68) { // ctrl+d
+      if (!confirm("선택된 문단을 삭제합니다.")) {
+        return true;
+      }
       const currentParagraphObject = this.focusedSentence.paragraph;
       const currentParagraph = this.state.paragraphs[currentParagraphObject.index]
       API.deleteParagraph(currentParagraph.id, () => {
@@ -305,6 +308,10 @@ export default class Paragraphs extends Component {
     }
   }
 
+  onEditCode(p) {
+    this.props.router.push(`paragraphs/${p.id}/edit`);
+  }
+
   render() {
     return (
       <div className="container paragraphs">
@@ -338,7 +345,14 @@ export default class Paragraphs extends Component {
                   );
                 }
               } else if (p.type === 'CODE') {
-                return <pre key={index}><code className="swift">{p.code}</code></pre>;
+                return (
+                  <div className="code" key={index}>
+                    <pre><code className="swift">{p.code}</code></pre>
+                    <div className="context-menu">
+                      <a onClick={this.onEditCode.bind(this, p)}>edit</a>
+                    </div>
+                  </div>
+                );
               }
             })
           }

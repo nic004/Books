@@ -12,13 +12,16 @@ div.edit-paragraph {
         width: 100%;
         padding: 0.5em;
         border: 1px solid $stroke-color;
+        &.input-code {
+          height: 10em;
+        }
       }
 
       textarea + textarea {
         margin-top: 0.5em;
       }
     }
-    div.new-sentence {
+    div.new-sentence, div.new-code {
       text-align: center;
       border: 1px solid $stroke-color;
       border-radius: 5px;
@@ -29,6 +32,9 @@ div.edit-paragraph {
         &:hover {
           font-weight: bold;
         }
+      }
+      &.new-code {
+        margin-bottom: 1em;
       }
     }
   }

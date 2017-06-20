@@ -96,19 +96,35 @@ div.paragraphs {
     }
   }
 
-  pre {
-    margin: 0;
-  }
+  div.code {
+    position: relative;
 
-  code.hljs {
-    margin-top: 2em;
-    margin-bottom: 2em;
-    border: 1px solid #d9d9d9;
-    background-color: white;
-    font-family: monaco;
-    font-size: 0.9em;
-    line-height: 1.4em;
-    padding-left: 2em;
+    pre {
+      margin: 0;
+    }
+
+    code.hljs {
+      margin-top: 2em;
+      margin-bottom: 2em;
+      border: 1px solid #d9d9d9;
+      background-color: white;
+      font-family: monaco;
+      font-size: 0.9em;
+      line-height: 1.4em;
+      padding-left: 2em;
+    }
+
+    div.context-menu {
+      position: absolute;
+      top: 0.5em;
+      right: 0.5em;
+      a {
+        cursor: pointer;
+        &:hover {
+          color: red;
+        }
+      }
+    }
   }
 
 }
