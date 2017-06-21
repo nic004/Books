@@ -4,8 +4,62 @@ div.edit-paragraph {
   margin-right: auto;
 
   div.sentences {
+    padding-top: 1em;
+
+    div.Dropdown-placeholder {
+      font-size: 0.8em;
+      padding: 1em;
+      border: 1px solid $stroke-color;
+      border-radius: 5px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    div.Dropdown-control {
+      position: relative;
+    }
+
+    div.Dropdown-menu {
+      position: absolute;
+      background-color: white;
+      border: 1px solid $stroke-color;
+      width: 1024px;
+      margin-top: -3px;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+      padding-top: 0.5em;
+      padding-bottom: 0.5em;
+
+      div.Dropdown-option {
+        font-size: 0.8em;
+        // margin-bottom: 0.5em;
+        height: 2.2em;
+        line-height: 2.2em;
+        padding-left: 1em;
+        padding-right: 1em;
+        cursor: pointer;
+        &:hover {
+          background-color: $gray-bg-color;
+        }
+      }
+    }
+
+    span.Dropdown-arrow {
+      border-color: #999 transparent transparent;
+      border-style: solid;
+      border-width: 5px 5px 0;
+      content: ' ';
+      display: block;
+      height: 0;
+      position: absolute;
+      right: 1em;
+      top: 1.15em;
+      width: 0;
+    }
+
     div.sentence-info {
       margin-bottom: 2em;
+      margin-top: 2em;
 
       textarea {
         display: block;

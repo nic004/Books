@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Router, browserHistory} from 'react-router';
+import Dropdown from 'react-dropdown';
 import update from 'react-addons-update';
 import API from 'books/Api.jsx';
 import hljs from 'highlight';
@@ -42,7 +43,12 @@ export default class EditParagraph extends Component {
   }
 
   onChangeCode(e) {
-    const p = update(this.state.paragraph, {code: {$set: e.target.value}});
+    const p = update(this.state.paragraph, {code: {$set: e.target.value}, type: {$set: (e.target.value ? 'CODE' : this.state.paragraph.type)}});
+    this.setState({paragraph: p});
+  }
+
+  onChangeParagraphType(item) {
+    const p = update(this.state.paragraph, {type: {$set: item.value}});
     this.setState({paragraph: p});
   }
 
@@ -52,6 +58,7 @@ export default class EditParagraph extends Component {
         <form onSubmit={this.onSave.bind(this)}>
           {!this.state.paragraph ? null :
             <div className='sentences'>
+              <Dropdown onChange={this.onChangeParagraphType.bind(this)} value={this.state.paragraph.type} options={['PLAIN', 'CODE', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'LISTITEM']}/>
               <div className='sentence-info'>
                 <textarea className='input-code' type='text' onChange={this.onChangeCode.bind(this)} value={this.state.paragraph.code || ''} />
               </div>

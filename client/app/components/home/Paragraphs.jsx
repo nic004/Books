@@ -15,6 +15,7 @@ export default class Paragraphs extends Component {
       value: '',
       paragraphs: [],
       commentEditingParagraphIndex: -1,
+      typeEditingParagraphIndex: -1
     }
     this.componentConstructed = false;
     this.keyUpHandler = this.onKeyUp.bind(this);
@@ -198,6 +199,32 @@ export default class Paragraphs extends Component {
     return false;
   }
 
+  selectSentence(e) {
+    if (e.keyCode != 89) { // y
+      return false;
+    }
+
+    if (!this.focusedSentence || this.focusedSentence.isEditMode()) {
+      return false;
+    }
+
+    this.focusedSentence.select();
+    return true;
+  }
+
+  editType(e) {
+    if (!this.focusedSentence) {
+      return false;
+    }
+    
+    if (e.ctrlKey && e.keyCode == 87) { // ctrl+w
+      // this.props.router.push(`paragraphs/${currentParagraph.id}/edit`);
+      this.setState({typeEditingParagraphIndex: this.focusedSentence.paragraph.index});
+      return true;
+    }
+    return false;
+  }
+
   onKeyUp(e) {
     if (!this.components || Object.keys(this.components.paragraphs).length <= 0) {
       return;
@@ -226,6 +253,14 @@ export default class Paragraphs extends Component {
     }
 
     if (this.deleteParagraph(e)) {
+      return;
+    }
+
+    if (this.selectSentence(e)) {
+      return;
+    }
+
+    if (this.editType(e)) {
       return;
     }
 
@@ -312,7 +347,24 @@ export default class Paragraphs extends Component {
     this.props.router.push(`paragraphs/${p.id}/edit`);
   }
 
+  onChangeParagraphType(type, e) {
+    const p = this.state.paragraphs[this.state.typeEditingParagraphIndex];
+    if (p) {
+      p.type = type;
+      API.putParagraph(p, () => {
+        this.componentConstructed = false;
+        this.load();
+      });
+    }
+    this.onCloseTypeSelectionDialog();
+  }
+
+  onCloseTypeSelectionDialog() {
+    this.setState({typeEditingParagraphIndex: -1});
+  }
+
   render() {
+    const currentParagraph = this.focusedSentence ? this.state.paragraphs[this.focusedSentence.paragraph.index] : null;
     return (
       <div className="container paragraphs">
         <section className='tools'>
@@ -323,10 +375,10 @@ export default class Paragraphs extends Component {
         <div className="content">
           {
             this.state.paragraphs.map((p, index) => {
-              if (p.type === 'PLAIN') {
+              if (p.type !== 'CODE') {
                 if (p.Sentences) {
                   return (
-                    <div className='paragraph' key={index} onMouseEnter={this.onMouseEnter.bind(this)} >
+                    <div className={`paragraph ${p.type.toLowerCase()}`} key={index} onMouseEnter={this.onMouseEnter.bind(this)} >
                       {p.Sentences.map((s, si) => {
                         return <Sentence key={si} sentence={s} ref={this.addSentenceComponent.bind(this, index, si)} didUpdateSentence={this.didUpdateSentence.bind(this)} onClickSentence={this.onClickSentence.bind(this)} />
                       })}
@@ -357,6 +409,18 @@ export default class Paragraphs extends Component {
             })
           }
         </div>
+        { currentParagraph && this.state.typeEditingParagraphIndex > 0 ?
+          <div className='dialog paragraph-type bg'>
+            <div className='content'>
+              <p>SELECT TYPE<a onClick={this.onCloseTypeSelectionDialog.bind(this)}>X</a></p>
+              {['PLAIN', 'CODE', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'LISTITEM'].map((type) => {
+                return (
+                  <a key={type} onClick={this.onChangeParagraphType.bind(this, type)}>{type}</a>
+                )
+              })}
+            </div>
+          </div> : null
+        }
       </div>
     );
   }

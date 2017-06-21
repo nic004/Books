@@ -17,6 +17,34 @@ export default class Sentence extends Component {
 
   setFocus(hasFocus, then) {
     this.setState({hasFocus: hasFocus, editMode: false}, then);
+    if (!hasFocus) {
+      this.deselect();
+    }
+  }
+
+  select() {
+    if (this.sentenceElement) {
+      var rangeObj, selection;
+      if (document.createRange) { // IE 9+ and all other browsers
+        rangeObj = document.createRange();
+        rangeObj.selectNodeContents(this.sentenceElement);
+        selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(rangeObj);
+      } else if (document.body.createTextRange) { // IE <=8
+        rangeObj = document.body.createTextRange();
+        rangeObj.moveToElementText(this.sentenceElement);
+        rangeObj.select();
+      }
+    }
+  }
+
+  deselect() {
+    if (window.getSelection) { // IE 9+ and all other browsers
+      window.getSelection().removeAllRanges();
+    } else if (document.selection) { // IE <=8
+      document.selection.empty();
+    }
   }
 
   edit(toEdit) {
@@ -79,6 +107,7 @@ export default class Sentence extends Component {
   render() {
     return (
       <div className={`sentence ${this.state.hasFocus ? 'has-focus' : ''} ${this.state.editMode ? 'edit' : ''}`} 
+           ref={(c) => { this.sentenceElement = c }}
            onMouseEnter={this.onMouseEnter.bind(this)} onMouseLeave={this.onMouseLeave.bind(this)} onClick={this.onClick.bind(this)}>
 
         {this.props.sentence.text}

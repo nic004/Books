@@ -23,7 +23,8 @@ var webpackConfig = {
       'whatwg-fetch': Path.resolve('./node_modules/whatwg-fetch'),
       'scroll-to-element': Path.resolve('./node_modules/scroll-to-element'),
       'react-key-handler': Path.resolve('./node_modules/react-key-handler'),
-      'react-addons-update': Path.resolve('./node_modules/react-addons-update')
+      'react-addons-update': Path.resolve('./node_modules/react-addons-update'),
+      'react-dropdown': Path.resolve('./node_modules/react-dropdown')
     }
   },
   plugins: [
