@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react';
-import {fetch} from 'books/utils/Utils.jsx';
+import {fetch, replaceURLWithHTMLLinks} from 'books/utils/Utils.jsx';
 import API from 'books/Api.jsx';
 
 export default class Sentence extends Component {
@@ -13,6 +13,9 @@ export default class Sentence extends Component {
   }
 
   componentDidMount() {
+    if (this.textSpan) {
+      this.textSpan.innerHTML = replaceURLWithHTMLLinks(this.textSpan.innerText, "<a href='$1' class='sentence-link' target='_blank'>$1</a>");
+    }
   }
 
   setFocus(hasFocus, then) {
@@ -110,7 +113,7 @@ export default class Sentence extends Component {
            ref={(c) => { this.sentenceElement = c }}
            onMouseEnter={this.onMouseEnter.bind(this)} onMouseLeave={this.onMouseLeave.bind(this)} onClick={this.onClick.bind(this)}>
 
-        {this.props.sentence.text}
+        <span ref={(c) => {this.textSpan = c}}>{this.props.sentence.text}</span>
 
         {!this.state.editMode && this.state.hasFocus && this.props.sentence.comment ? <div className="sentence-comment">{this.props.sentence.comment}</div> :null}
 

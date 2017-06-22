@@ -69,4 +69,9 @@ const checkInViewport = function (elm) {
   return !(rect.bottom < 0 || rect.top - viewHeight >= 0);
 }
 
-export { wfetch as fetch, head, post, put, del, isBlankString, offset, checkInViewport };
+const replaceURLWithHTMLLinks = function (text, format) {
+  var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+  return text.replace(exp, format);
+}
+
+export { wfetch as fetch, head, post, put, del, isBlankString, offset, checkInViewport, replaceURLWithHTMLLinks };

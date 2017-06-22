@@ -105,6 +105,10 @@ div.paragraphs {
           color: darkgoldenrod;
         }
 
+        a.sentence-link:hover {
+          color: cyan;
+        }
+
         div.sentence-comment {
           position: absolute;
           font-size: 0.7em;
