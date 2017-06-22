@@ -23,10 +23,18 @@ export default class Paragraphs extends Component {
 
   componentDidMount() {
     document.body.addEventListener("keyup", this.keyUpHandler);
-    this.load();
+    this.load(() => {
+      const paragraphId = this.props.location.query.paragraphId;
+      if (paragraphId) {
+        const paragraphElement = document.getElementById(`paragraph-${paragraphId}`);
+        if (paragraphElement && !checkInViewport(paragraphElement)) {
+          scrollToElement(paragraphElement);
+        }
+      }
+    });
   }
 
-  load() {
+  load(then) {
     API.getParagraphs(this.props.location.query.documentId, (response) => {
       this.components = {paragraphs: {}};
       this.setState({paragraphs: response.paragraphs}, () => {
@@ -34,6 +42,9 @@ export default class Paragraphs extends Component {
         this.componentConstructed = true;
         const blocks = document.querySelectorAll('pre code');
         blocks.forEach((b) => { hljs.highlightBlock(b) });
+        if (then) {
+          then();
+        }
       });
     });
   }
@@ -363,64 +374,81 @@ export default class Paragraphs extends Component {
     this.setState({typeEditingParagraphIndex: -1});
   }
 
+  onClickOutline(p, e) {
+    const paragraphElement = document.getElementById(`paragraph-${p.id}`);
+    if (paragraphElement) {
+      scrollToElement(paragraphElement);
+    }
+  }
+
+  outlineDiv() {
+    const headers = this.state.paragraphs.filter((p) => { return (['H1', 'H2', 'H3'].includes(p.type)); });
+    return (
+      <ul className='outline'>
+        <li className='outline-item append-paragraph'>
+          <Link to={`paragraphs/append?documentId=${this.props.location.query.documentId}`}>> 본문추가</Link>
+        </li>
+        {headers.map((p) => <li key={p.id} className={`outline-item ${p.type.toLowerCase()}`}><a onClick={this.onClickOutline.bind(this, p)}>{p.Sentences[0].text}</a></li>)}
+      </ul>
+    );
+  }
+
   render() {
     const currentParagraph = this.focusedSentence ? this.state.paragraphs[this.focusedSentence.paragraph.index] : null;
     return (
-      <div className="container paragraphs">
-        <section className='tools'>
-          <p className='tools'>
-            <Link to={`paragraphs/append?documentId=${this.props.location.query.documentId}`}>본문추가</Link>
-          </p>
-        </section>
-        <div className="content">
-          {
-            this.state.paragraphs.map((p, index) => {
-              if (p.type !== 'CODE') {
-                if (p.Sentences) {
+      <div className="paragraphs">
+        {this.outlineDiv()}
+        <div className="content-container">
+          <div className="content">
+            {
+              this.state.paragraphs.map((p, index) => {
+                if (p.type !== 'CODE') {
+                  if (p.Sentences) {
+                    return (
+                      <div id={`paragraph-${p.id}`} className={`paragraph ${p.type.toLowerCase()}`} key={index} onMouseEnter={this.onMouseEnter.bind(this)} >
+                        {p.Sentences.map((s, si) => {
+                          return <Sentence key={si} sentence={s} ref={this.addSentenceComponent.bind(this, index, si)} didUpdateSentence={this.didUpdateSentence.bind(this)} onClickSentence={this.onClickSentence.bind(this)} />
+                        })}
+
+                        {this.state.commentEditingParagraphIndex === index ?
+                          <form onSubmit={this.onCommentSubmit.bind(this)} className="edit-paragraph-comment">
+                            <textarea value={p.comment || ''} onChange={this.onCommentChange.bind(this)} ref={(c) => this.paragraphCommentTextarea = c} onKeyDown={this.onCommentKeyDown.bind(this)} />
+                            <input type="submit" value="Submit" />
+                          </form> : null
+                        }
+
+                        <div className="sentence-comments">{p.Sentences.map((s) => `${s.comment || ''} `)}</div>
+
+                        {p.comment ? <div className="paragraph-comments">{p.comment}</div> : null}
+                      </div>
+                    );
+                  }
+                } else if (p.type === 'CODE') {
                   return (
-                    <div className={`paragraph ${p.type.toLowerCase()}`} key={index} onMouseEnter={this.onMouseEnter.bind(this)} >
-                      {p.Sentences.map((s, si) => {
-                        return <Sentence key={si} sentence={s} ref={this.addSentenceComponent.bind(this, index, si)} didUpdateSentence={this.didUpdateSentence.bind(this)} onClickSentence={this.onClickSentence.bind(this)} />
-                      })}
-
-                      {this.state.commentEditingParagraphIndex === index ?
-                        <form onSubmit={this.onCommentSubmit.bind(this)} className="edit-paragraph-comment">
-                          <textarea value={p.comment || ''} onChange={this.onCommentChange.bind(this)} ref={(c) => this.paragraphCommentTextarea = c} onKeyDown={this.onCommentKeyDown.bind(this)} />
-                          <input type="submit" value="Submit" />
-                        </form> : null
-                      }
-
-                      <div className="sentence-comments">{p.Sentences.map((s) => `${s.comment || ''} `)}</div>
-
-                      {p.comment ? <div className="paragraph-comments">{p.comment}</div> : null}
+                    <div id={`paragraph-${p.id}`} className="code" key={index}>
+                      <pre><code className="swift">{p.code}</code></pre>
+                      <div className="context-menu">
+                        <a onClick={this.onEditCode.bind(this, p)}>edit</a>
+                      </div>
                     </div>
                   );
                 }
-              } else if (p.type === 'CODE') {
-                return (
-                  <div className="code" key={index}>
-                    <pre><code className="swift">{p.code}</code></pre>
-                    <div className="context-menu">
-                      <a onClick={this.onEditCode.bind(this, p)}>edit</a>
-                    </div>
-                  </div>
-                );
-              }
-            })
+              })
+            }
+          </div>
+          { currentParagraph && this.state.typeEditingParagraphIndex > 0 ?
+            <div className='dialog paragraph-type bg'>
+              <div className='content'>
+                <p>SELECT TYPE<a onClick={this.onCloseTypeSelectionDialog.bind(this)}>X</a></p>
+                {['PLAIN', 'CODE', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'LISTITEM'].map((type) => {
+                  return (
+                    <a key={type} onClick={this.onChangeParagraphType.bind(this, type)}>{type}</a>
+                  )
+                })}
+              </div>
+            </div> : null
           }
         </div>
-        { currentParagraph && this.state.typeEditingParagraphIndex > 0 ?
-          <div className='dialog paragraph-type bg'>
-            <div className='content'>
-              <p>SELECT TYPE<a onClick={this.onCloseTypeSelectionDialog.bind(this)}>X</a></p>
-              {['PLAIN', 'CODE', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'LISTITEM'].map((type) => {
-                return (
-                  <a key={type} onClick={this.onChangeParagraphType.bind(this, type)}>{type}</a>
-                )
-              })}
-            </div>
-          </div> : null
-        }
       </div>
     );
   }

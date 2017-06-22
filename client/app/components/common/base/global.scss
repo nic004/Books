@@ -1,5 +1,13 @@
 @import url(https://fonts.googleapis.com/css?family=Nunito:400,300);
 
+html, body {
+  height: 100%;
+}
+
+body > div {
+  height: 100%;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -20,5 +28,8 @@ body {
 
 .container {
   width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   // text-align: center;
 }

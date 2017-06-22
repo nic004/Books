@@ -2,8 +2,12 @@ header {
   width: 100%;
   padding: 0.5em;
   border-bottom: 1px solid $light-gray;
+  flex: 0 0 18px;
 
   nav {
+    max-width: 1324px;
+    margin-left: auto;
+    margin-right: auto;
 
     ul {
       text-align: center;
