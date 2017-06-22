@@ -1,39 +1,43 @@
 div.paragraphs {
-  flex: 0 1 auto;
   display: flex;
   flex-direction: row;
   max-width: 1324px;
   margin-left: auto;
   margin-right: auto;
 
-  ul.outline {
+  div.outline-container {
     flex: 0 1 300px;
     min-width: 0;
-    font-size: 0.8em;
-    line-height: 1.5em;
-    padding: 1em;
-    list-style: none;
-    li.append-paragraph {
-      margin-bottom: 0.5em;
-    }
-    li.h1 {
-    }
-    li.h2 {
-      margin-top: 0.5em;
-      padding-left: 1em;
-    }
-    li.h3 {
-      padding-left: 2em;
-    }
-    li {
-      a {
-        cursor: pointer;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
-        display: block;
-        &:hover {
-          color: purple;
+    position: relative;
+    ul.outline {
+      font-size: 0.8em;
+      line-height: 1.5em;
+      padding: 1em;
+      list-style: none;
+      position: fixed;
+      box-sizing: border-box;
+      li.append-paragraph {
+        margin-bottom: 0.5em;
+      }
+      li.h1 {
+      }
+      li.h2 {
+        margin-top: 0.5em;
+        padding-left: 1em;
+      }
+      li.h3 {
+        padding-left: 2em;
+      }
+      li {
+        a {
+          cursor: pointer;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+          display: block;
+          &:hover {
+            color: purple;
+          }
         }
       }
     }

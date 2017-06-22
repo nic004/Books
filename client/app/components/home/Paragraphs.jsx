@@ -19,11 +19,14 @@ export default class Paragraphs extends Component {
     }
     this.componentConstructed = false;
     this.keyUpHandler = this.onKeyUp.bind(this);
+    this.resizeWindowHandler = this.onResizeWindow.bind(this);
   }
 
   componentDidMount() {
     document.body.addEventListener("keyup", this.keyUpHandler);
+    window.addEventListener("resize", this.resizeWindowHandler);
     this.load(() => {
+      this.onResizeWindow();
       const paragraphId = this.props.location.query.paragraphId;
       if (paragraphId) {
         const paragraphElement = document.getElementById(`paragraph-${paragraphId}`);
@@ -32,6 +35,11 @@ export default class Paragraphs extends Component {
         }
       }
     });
+  }
+
+  componentWillUnmount() {
+    document.body.removeEventListener("resize", this.keyUpHandler);
+    window.removeEventListener("resize", this.resizeWindowHandler);
   }
 
   load(then) {
@@ -384,13 +392,21 @@ export default class Paragraphs extends Component {
   outlineDiv() {
     const headers = this.state.paragraphs.filter((p) => { return (['H1', 'H2', 'H3'].includes(p.type)); });
     return (
-      <ul className='outline'>
-        <li className='outline-item append-paragraph'>
-          <Link to={`paragraphs/append?documentId=${this.props.location.query.documentId}`}>> 본문추가</Link>
-        </li>
-        {headers.map((p) => <li key={p.id} className={`outline-item ${p.type.toLowerCase()}`}><a onClick={this.onClickOutline.bind(this, p)}>{p.Sentences[0].text}</a></li>)}
-      </ul>
+      <div className='outline-container' ref={(c) => this.outlineContainer = c }>
+        <ul className='outline' ref={(c) => this.outline = c }>
+          <li className='outline-item append-paragraph'>
+            <Link to={`paragraphs/append?documentId=${this.props.location.query.documentId}`}>> 본문추가</Link>
+          </li>
+          {headers.map((p) => <li key={p.id} className={`outline-item ${p.type.toLowerCase()}`}><a onClick={this.onClickOutline.bind(this, p)}>{p.Sentences[0].text}</a></li>)}
+        </ul>
+      </div>
     );
+  }
+
+  onResizeWindow() {
+    if (this.outlineContainer && this.outline) {
+      this.outline.style.width = `${this.outlineContainer.offsetWidth}px`;
+    }
   }
 
   render() {
