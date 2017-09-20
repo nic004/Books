@@ -102,23 +102,19 @@ export default class ImportParagraphs extends Component {
       body: formData
     }).then(this.processStatus).then(this.json).then((json) => {
       console.log(json);
-      const resultTexts = json.ParsedResults.map((item) => { return this.paragraph(item.ParsedText); });
+      const resultTexts = json.ParsedResults.map((item) => { 
+        return this.paragraph(item.ParsedText); 
+      }).join('&&&').split('&&&');
       this.setState({parsedTexts: resultTexts});
     });
   }
 
   paragraph(lines) {
-    const path1 = lines.replace(/([^.])\W\n/g, (match, p1) => { 
-      console.log(p1);
-      return p1;
-    });
-    // const path2 = path1.replace(/(\.\W)\n/g, (match, p1) => {
-    //   return `${p1}\n\n`;
-    // })
-
-    console.log(path1);
-
-    return path1;
+    const substi = `\\1`;
+    const path1 = lines.replace(/([^.\s])(\s*)\n/g, '$1');
+    const path2 = path1.replace(/(\.\s*)\n/g, '.&&&');
+    console.log(path2);
+    return path2;
   }
 
   render() {
