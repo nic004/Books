@@ -19,6 +19,7 @@ var webpackConfig = {
     alias: {
       'books': Path.resolve('./client/app/'),
       'dateformat': Path.resolve('./node_modules/dateformat'),
+      'downloadjs': Path.resolve('./node_modules/downloadjs'),
       'highlight': Path.resolve('./node_modules/highlight.js'),
       'whatwg-fetch': Path.resolve('./node_modules/whatwg-fetch'),
       'scroll-to-element': Path.resolve('./node_modules/scroll-to-element'),

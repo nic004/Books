@@ -63,6 +63,7 @@
   "dependencies": {
     "body-parser": "^1.17.1",
     "dateformat": "^2.0.0",
+    "downloadjs": "^1.4.7",
     "express": "^4.13.4",
     "highlight.js": "^9.11.0",
     "nodemon": "^1.11.0",

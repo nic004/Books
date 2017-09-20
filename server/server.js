@@ -7,6 +7,9 @@ const controllers = require('./controllers');
 
 app.use(express.static(path.resolve(__dirname + '/../')));
 app.use(express.static(path.resolve(__dirname + '/../dist')));
+app.use('static', express.static(path.resolve(__dirname + '/../static')));
+
+console.log(path.resolve(__dirname + '/../static'));
 
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
