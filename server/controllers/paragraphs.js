@@ -2,12 +2,23 @@
 
 const express = require('express');
 const models = require('../models');
+const path = require('path');
+const fs = require('fs');
+
 const router = express.Router();
 
 router.get('/', (req, res) => {
   models.Paragraph.findAll({where: {DocumentId: req.query.documentId}, include: [{model: models.Sentence}], order: ['Paragraph.id', 'Sentences.id']})
   .then((paragraphs) => {
     res.json({paragraphs: paragraphs});
+  });
+});
+
+router.get('/captures', (req, res) => {
+  const dir = path.resolve(__dirname + '/../../static/images/captures/');
+  fs.readdir(dir, (err, files) => {
+    const pngs = files.filter((file) => /.+\.(png|jpg|jpeg)/i.test(file)).map((img) => `/static/images/captures/${img}`);
+    res.json({urls: pngs});
   });
 });
 

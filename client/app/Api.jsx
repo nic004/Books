@@ -56,6 +56,13 @@ class Api {
       .catch(failure);
   }
 
+  getCaptures(success, failure) {
+    fetch(`${Api.baseUrl}/paragraphs/captures`)
+      .then((response) => response.json())
+      .then(success)
+      .catch(failure);
+  }
+
   getParagraph(paragraphId, success, failure) {
     fetch(`${Api.baseUrl}/paragraphs/${paragraphId}`)
       .then((response) => response.json())

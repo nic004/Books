@@ -3,8 +3,27 @@ div.import-paragraphs {
   margin-right: auto;
   // width: 1024px;  
 
-  img.capture {
-    width: 400px;
-    height: 500px;
+  div.row {
+    margin-bottom: 2em;
+  }
+
+  div.column.source {
+    display: inline-block;
+    vertical-align: top;
+    width: 30%;
+    img.capture {
+      width: 100%;
+    }
+  }
+
+  div.column.result {
+    display: inline-block;
+    vertical-align: top;
+    width: 70%;
+    padding: 1em;
+    font-size: 0.8em;
+    div.paragraph {
+      margin-bottom: 1em;
+    }
   }
 }
