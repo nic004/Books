@@ -14,6 +14,13 @@ div.import-paragraphs {
     img.capture {
       width: 100%;
     }
+    a {
+      font-size: 0.8em;
+      display: inline-block;
+      border: 1px solid $stroke-color;
+      padding: 0.5em;
+      margin-right: 0.5em;
+    }
   }
 
   div.column.result {
@@ -22,8 +29,32 @@ div.import-paragraphs {
     width: 70%;
     padding: 1em;
     font-size: 0.8em;
-    div.paragraph {
-      margin-bottom: 1em;
+
+    textarea {
+      width: 100%;
+      height: 300px;
+      border: 2px solid $stroke-color;
+      border-radius: 0.5em;
+      border-style: dashed;
+      padding: 1em;
+      outline: none;
+      font-size: 1em;
+      color: $gray-text-color;
+    }
+
+    div.preview {
+      margin-bottom: 2em;
+      border: 1px solid $stroke-color;
+      border-radius: 0.5em;
+      padding: 1em;
+      width: 100%;
+  
+      p.paragraph {
+        line-height: 1.8em;
+        span.sentence:not(:first-child) {
+          margin-left: 0.5em;
+        }
+      }
     }
   }
 }

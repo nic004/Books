@@ -397,6 +397,9 @@ export default class Paragraphs extends Component {
           <li className='outline-item append-paragraph'>
             <Link to={`paragraphs/append?documentId=${this.props.location.query.documentId}`}>> 본문추가</Link>
           </li>
+          <li className='outline-item append-paragraph'>
+            <Link to={`paragraphs/import?documentId=${this.props.location.query.documentId}`}>> 이미지 로딩</Link>
+          </li>
           {headers.map((p) => <li key={p.id} className={`outline-item ${p.type.toLowerCase()}`}><a onClick={this.onClickOutline.bind(this, p)}>{p.Sentences[0].text}</a></li>)}
         </ul>
       </div>
