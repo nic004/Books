@@ -268,27 +268,40 @@ export default class Paragraphs extends Component {
       const first = 0;
       const last = filtered.length - 1;
       let selections = filtered.map((div, index) => {
-          let item = {};
-          let text = div.innerText;
-          if (index == first && index == last) {
-            item.range = { offset: range.startOffset, length: range.endOffset - range.startOffset }
-          } else if (index == first) {
-            item.range = { offset: range.startOffset, length: text.length - (range.startOffset + 1) };
-          } else if (index == last) {
-            item.range = { offset: 0, length: range.endOffset };
-          } else {
-            item.range = { offset: 0, length: text.length };
-          }
-          item.text = text.substr(item.range.offset, item.range.length);
-          item.node = div;
-          return item;
-        });
+        let item = {};
+        let text = div.innerText;
+        if (index == first && index == last) {
+          item.range = { offset: range.startOffset, length: range.endOffset - range.startOffset }
+        } else if (index == first) {
+          item.range = { offset: range.startOffset, length: text.length - (range.startOffset + 1) };
+        } else if (index == last) {
+          item.range = { offset: 0, length: range.endOffset };
+        } else {
+          item.range = { offset: 0, length: text.length };
+        }
+        item.text = text.substr(item.range.offset, item.range.length);
+        item.node = div;
+        item.sentenceId = div.getAttribute('sentence-id');
+        return item;
+      });
 
-        selections.forEach((it) => {
-          it.node.classList.add("selected");
-        });
+      selections.forEach((it) => {
+        it.node.classList.add("selected");
+      });
 
+      const params = selections.map((s) => {
+        return {
+          offset: s.range.offset, 
+          length: s.range.length,
+          SentenceId: s.sentenceId
+        };
+      })
+
+      API.postSelection(params,  () => {
         window.getSelection().removeAllRanges();
+        this.componentConstructed = false;
+        this.load();
+      });
 
       return true;
     }

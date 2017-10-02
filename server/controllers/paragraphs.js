@@ -8,7 +8,7 @@ const fs = require('fs');
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  models.Paragraph.findAll({where: {DocumentId: req.query.documentId}, include: [{model: models.Sentence}], order: ['Paragraph.id', 'Sentences.id']})
+  models.Paragraph.findAll({where: {DocumentId: req.query.documentId}, include: [{model: models.Sentence, include: [{model: models.Selection}]}], order: ['Paragraph.id', 'Sentences.id']})
   .then((paragraphs) => {
     res.json({paragraphs: paragraphs});
   });

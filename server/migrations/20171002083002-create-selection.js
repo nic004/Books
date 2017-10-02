@@ -30,7 +30,7 @@ module.exports = {
         onDelete: "CASCADE",
         allowNull: false,
         references: {
-          model: 'Sentence',
+          model: 'Sentences',
           key: 'id'
         }
       }

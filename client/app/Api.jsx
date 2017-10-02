@@ -87,6 +87,16 @@ class Api {
       .catch(failure);
   }
 
+  postSelection(selections, success, failure) {
+    const data = {
+      selections: selections
+    };
+
+    post(`${Api.baseUrl}/selections`, data)
+      .then(success)
+      .catch(failure);
+  }
+
 }
 
 Api.baseUrl = 'http://localhost:8080/api';
