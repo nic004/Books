@@ -103,11 +103,11 @@ function getRangeSelectedNodes(range) {
         rangeNodes.push( node = nextNode(node) );
     }
 
-    console.log("1st path visited");
-    console.log(rangeNodes);
+    // console.log("1st path visited");
+    // console.log(rangeNodes);
 
-    console.log("commonAncestor => ");
-    console.log(range.commonAncestorContainer);
+    // console.log("commonAncestor => ");
+    // console.log(range.commonAncestorContainer);
 
     // Add partially selected nodes at the start of the range
     node = range.startContainer;

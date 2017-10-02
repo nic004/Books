@@ -256,7 +256,6 @@ export default class Paragraphs extends Component {
       } else if (nodes.length <= 0) {
         return false;
       }
-      console.log(nodes);
 
       const ws = window.getSelection();
       const range = ws.getRangeAt(0);
@@ -264,7 +263,7 @@ export default class Paragraphs extends Component {
       const endContainer = range.endContainer;
 
       let filtered = nodes
-        .filter((v) => (v.tagName == "DIV" && v.className.includes("sentence")));
+        .filter((v) => (v.tagName == "DIV" && v.className.includes("sentence") && v.innerText));
         
       const first = 0;
       const last = filtered.length - 1;
@@ -285,8 +284,11 @@ export default class Paragraphs extends Component {
           return item;
         });
 
-      console.log(selections);
+        selections.forEach((it) => {
+          it.node.classList.add("selected");
+        });
 
+        window.getSelection().removeAllRanges();
 
       return true;
     }
