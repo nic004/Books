@@ -10,9 +10,6 @@ function Header() {
             <Link to="/">Home</Link>
           </li>
           <li>
-            <Link to="/paragraphs/import">Import(test)</Link>
-          </li>
-          <li>
             <Link to="/about">About</Link>
           </li>
         </ul>
