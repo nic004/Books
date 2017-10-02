@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Link} from 'react-router';
 import update from 'react-addons-update';
 import API from 'books/Api.jsx';
-import {isBlankString, checkInViewport} from 'books/utils/Utils.jsx';
+import {isBlankString, checkInViewport, getSelectedNodes} from 'books/utils/Utils.jsx';
 import hljs from 'highlight';
 import 'highlight/styles/atom-one-light.css';
 import scrollToElement from 'scroll-to-element';
@@ -244,6 +244,55 @@ export default class Paragraphs extends Component {
     return false;
   }
 
+  selectSentences(e) {
+    if (e.ctrlKey && e.keyCode == 85) { // ctrl+u
+      let nodes = getSelectedNodes();
+      if (nodes.length == 1) {
+        const t = nodes[0];
+        const sp = t.parentNode;
+        const div = sp.parentNode;
+        nodes.unshift(sp);
+        nodes.unshift(div);
+      } else if (nodes.length <= 0) {
+        return false;
+      }
+      console.log(nodes);
+
+      const ws = window.getSelection();
+      const range = ws.getRangeAt(0);
+      const startContainer = range.startContainer;
+      const endContainer = range.endContainer;
+
+      let filtered = nodes
+        .filter((v) => (v.tagName == "DIV" && v.className.includes("sentence")));
+        
+      const first = 0;
+      const last = filtered.length - 1;
+      let selections = filtered.map((div, index) => {
+          let item = {};
+          let text = div.innerText;
+          if (index == first && index == last) {
+            item.range = { offset: range.startOffset, length: range.endOffset - range.startOffset }
+          } else if (index == first) {
+            item.range = { offset: range.startOffset, length: text.length - (range.startOffset + 1) };
+          } else if (index == last) {
+            item.range = { offset: 0, length: range.endOffset };
+          } else {
+            item.range = { offset: 0, length: text.length };
+          }
+          item.text = text.substr(item.range.offset, item.range.length);
+          item.node = div;
+          return item;
+        });
+
+      console.log(selections);
+
+
+      return true;
+    }
+    return false;
+  }
+
   onKeyUp(e) {
     if (!this.components || Object.keys(this.components.paragraphs).length <= 0) {
       return;
@@ -284,6 +333,10 @@ export default class Paragraphs extends Component {
     }
 
     if (this.moveFocus(e)) {
+      return;
+    }
+
+    if (this.selectSentences(e)) {
       return;
     }
 
