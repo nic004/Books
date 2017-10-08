@@ -219,16 +219,16 @@ export default class Paragraphs extends Component {
   }
 
   selectSentence(e) {
-    if (e.keyCode != 89) { // y
-      return false;
-    }
+    // if (e.keyCode != 89) { // y
+    //   return false;
+    // }
 
-    if (!this.focusedSentence || this.focusedSentence.isEditMode()) {
-      return false;
-    }
+    // if (!this.focusedSentence || this.focusedSentence.isEditMode()) {
+    //   return false;
+    // }
 
-    this.focusedSentence.select();
-    return true;
+    // this.focusedSentence.select();
+    // return true;
   }
 
   editType(e) {
@@ -245,7 +245,8 @@ export default class Paragraphs extends Component {
   }
 
   selectSentences(e) {
-    if (e.ctrlKey && e.keyCode == 85) { // ctrl+u
+    // if (e.ctrlKey && e.keyCode == 85) { // ctrl+u
+    if (e.keyCode == 89) { // y
       let nodes = getSelectedNodes();
       if (nodes.length == 1) {
         const t = nodes[0];
