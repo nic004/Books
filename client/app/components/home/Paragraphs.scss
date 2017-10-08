@@ -100,6 +100,12 @@ div.paragraphs {
           }
         } 
 
+        &.h4 {
+          & > div.sentence {
+            color: darkgoldenrod;
+          } 
+        }
+
         &.listitem {
           padding-left: 2em;
           position: relative;
@@ -174,6 +180,7 @@ div.paragraphs {
       div.plain + div.h3 {
         margin-top: 2.5em;
       }
+
     }
 
     div.code {
