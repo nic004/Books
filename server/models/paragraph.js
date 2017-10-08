@@ -3,7 +3,8 @@ module.exports = function(sequelize, DataTypes) {
   var Paragraph = sequelize.define('Paragraph', {
     type: DataTypes.STRING,
     code: DataTypes.STRING,
-    comment: DataTypes.STRING
+    comment: DataTypes.STRING,
+    position: DataTypes.STRING
   }, {
     classMethods: {
       associate: function(models) {

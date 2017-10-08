@@ -8,7 +8,7 @@ const fs = require('fs');
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  models.Paragraph.findAll({where: {DocumentId: req.query.documentId}, include: [{model: models.Sentence, include: [{model: models.Selection}]}], order: ['Paragraph.id', 'Sentences.id']})
+  models.Paragraph.findAll({where: {DocumentId: req.query.documentId}, include: [{model: models.Sentence, include: [{model: models.Selection}]}], order: ['Paragraph.position', 'Sentences.id']})
   .then((paragraphs) => {
     res.json({paragraphs: paragraphs});
   });
@@ -29,25 +29,30 @@ router.get('/:id', (req, res) => {
   });
 });
 
+function addSentneces(paragraphs, index, ps, p, res) {
+  const isLast = index == paragraphs.length - 1;
+  let sentences = ps.sentences;
+  if (sentences) {
+    sentences.forEach((s) => { s.ParagraphId = p.id; });
+    models.Sentence.bulkCreate(sentences).then((ss) => {
+      if (isLast) {
+        res.end();
+      }
+    });
+  } else {
+    if (isLast) {
+      res.end();
+    }
+  }
+}
 
 router.post('/', (req, res) => {
   const paragraphs = req.body.paragraphs;
   paragraphs.forEach((ps, index) => {
     models.Paragraph.create(ps).then((p) => {
-      const isLast = index == paragraphs.length - 1;
-      let sentences = ps.sentences;
-      if (sentences) {
-        sentences.forEach((s) => { s.ParagraphId = p.id; });
-        models.Sentence.bulkCreate(sentences).then((ss) => {
-          if (isLast) {
-            res.end();
-          }
-        });
-      } else {
-        if (isLast) {
-          res.end();
-        }
-      }
+      p.update({position: p.id}).then(() => {
+        addSentneces(paragraphs, index, ps, p, res);
+      });
     });
   });
 });
