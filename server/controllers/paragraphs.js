@@ -68,9 +68,31 @@ router.post('/insert', (req, res) => {
   let data = params;
   data.type = 'PLAIN';
 
-  models.Paragraph.create(data).then((p) => {
-    res.end();
-  });
+  // let where = `${params.position}.%`;
+  // if (params.position.includes('.')) {
+  //   const floatPos = 
+  //   const positions = p.position.split(".");
+  //   const frontDot = positions[0];
+  //   const underDot = positions[1];
+
+  //   liker = params.position;
+  // }
+
+  // models.Paragraph.findAll({where: {position: {$like: `${params.position}.%`}}, order: ['Paragraph.position']})
+  // .then((paragraphs) => {
+  //   paragraphs.forEach((p) => {
+  //     const positions = p.position.split(".");
+  //     const frontDot = positions[0];
+  //     const underDot = positions[1];
+  //     const pos = parseInt(underDot) + 1;
+  //     console.log(`${frontDot}.${pos}`);
+  //   });
+
+    models.Paragraph.create(data).then((p) => {
+      res.end();
+    });
+  // });
+
 });
 
 router.put('/', (req, res) => {
