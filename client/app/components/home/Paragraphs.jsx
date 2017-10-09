@@ -15,7 +15,8 @@ export default class Paragraphs extends Component {
       value: '',
       paragraphs: [],
       commentEditingParagraphIndex: -1,
-      typeEditingParagraphIndex: -1
+      typeEditingParagraphIndex: -1,
+      contextMenuParagraphIndex: -1
     }
     this.componentConstructed = false;
     this.keyUpHandler = this.onKeyUp.bind(this);
@@ -159,6 +160,10 @@ export default class Paragraphs extends Component {
           scrollToElement(fse, {duration: 500});
         }
       });
+
+      if (this.state.contextMenuParagraphIndex >= 0) {
+        this.setState({contextMenuParagraphIndex: -1});
+      }
 
       e.stopPropagation();
       e.preventDefault();
@@ -309,6 +314,15 @@ export default class Paragraphs extends Component {
     return false;
   }
 
+  paragraphContextMenu(e) {
+    if (this.focusedSentence && e.key === 'm') {
+      const currentParagraphObject = this.focusedSentence.paragraph;
+      this.setState({contextMenuParagraphIndex: currentParagraphObject.index});
+      return true;
+    }
+    return false;
+  }
+
   onKeyUp(e) {
     if (!this.components || Object.keys(this.components.paragraphs).length <= 0) {
       return;
@@ -345,6 +359,10 @@ export default class Paragraphs extends Component {
     }
 
     if (this.editType(e)) {
+      return;
+    }
+
+    if (this.paragraphContextMenu(e)) {
       return;
     }
 
@@ -403,6 +421,10 @@ export default class Paragraphs extends Component {
       }
       this.focusedSentence = targetSentenceComponent;
       this.focusedSentence.setFocus(true);
+
+      if (this.state.contextMenuParagraphIndex >= 0) {
+        this.setState({contextMenuParagraphIndex: -1});
+      }
     }
   }
 
@@ -481,6 +503,20 @@ export default class Paragraphs extends Component {
     }
   }
 
+  onAddParagraphToBelow(index, e) {
+    const currentParagraph = this.state.paragraphs[index];
+    const currentParagraphId = currentParagraph.id;
+    const documentId = this.props.location.query.documentId;
+    if (!documentId) {
+      return;
+    }
+
+    API.postParagraphsInsert(documentId, currentParagraphId, () => {
+      this.componentConstructed = false;
+      this.load();
+    });
+  }
+
   render() {
     const currentParagraph = this.focusedSentence ? this.state.paragraphs[this.focusedSentence.paragraph.index] : null;
     return (
@@ -493,10 +529,18 @@ export default class Paragraphs extends Component {
                 if (p.type !== 'CODE') {
                   if (p.Sentences) {
                     return (
-                      <div id={`paragraph-${p.id}`} className={`paragraph ${p.type.toLowerCase()}`} key={index} onMouseEnter={this.onMouseEnter.bind(this)} >
+                      <div id={`paragraph-${p.id}`} className={`paragraph ${p.type.toLowerCase()}`} key={index}>
                         {p.Sentences.map((s, si) => {
                           return <Sentence key={si} sentence={s} ref={this.addSentenceComponent.bind(this, index, si)} didUpdateSentence={this.didUpdateSentence.bind(this)} onClickSentence={this.onClickSentence.bind(this)} />
                         })}
+
+                        {this.state.contextMenuParagraphIndex != index ? null : 
+                          <ul className='paragraph-menu'>
+                            <li>COMMENT</li>
+                            <li>EDIT</li>
+                            <li><a onClick={this.onAddParagraphToBelow.bind(this, this.state.contextMenuParagraphIndex)}>ADD BELOW</a></li>
+                          </ul>
+                        }
 
                         {this.state.commentEditingParagraphIndex === index ?
                           <form onSubmit={this.onCommentSubmit.bind(this)} className="edit-paragraph-comment">

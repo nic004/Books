@@ -12,7 +12,7 @@ div.paragraphs {
     ul.outline {
       font-size: 0.8em;
       line-height: 1.5em;
-      padding: 1em;
+      padding: 3em;
       list-style: none;
       position: fixed;
       box-sizing: border-box;
@@ -82,6 +82,10 @@ div.paragraphs {
           }
         }
 
+        &.plain > div.sentence {
+          font-weight: 200;
+        }
+
         &.h1 {
           & > div.sentence {
             font-size: 2em;
@@ -117,6 +121,23 @@ div.paragraphs {
           }
         }
 
+        ul.paragraph-menu {
+          display: block;
+          li {
+            display: inline-block;
+            font-size: 0.5em;
+            a {
+              cursor: pointer;
+              &:hover {
+                color: red;
+              }
+            }
+          }
+          li + li {
+            margin-left: 1em;
+          }
+        }
+
         div.sentence {
           display: inline;
           &:not(:first-child) {
@@ -124,8 +145,8 @@ div.paragraphs {
           }
           &.has-focus {
             // font-size: 1.5em;
-            color: darkblue;
-            font-weight: bold;
+            color: darkmagenta;
+            // font-weight: bold;
           }
           &.edit {
             display: block;

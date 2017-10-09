@@ -57,6 +57,22 @@ router.post('/', (req, res) => {
   });
 });
 
+router.post('/insert', (req, res) => {
+  const params = req.body;
+  if (!params.position) {
+    res.end();
+  }
+
+  // TODO: many things ...
+
+  let data = params;
+  data.type = 'PLAIN';
+
+  models.Paragraph.create(data).then((p) => {
+    res.end();
+  });
+});
+
 router.put('/', (req, res) => {
   const paragraph = req.body.paragraph;
   models.Paragraph.findById(paragraph.id).then((p) => {
