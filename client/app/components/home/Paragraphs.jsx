@@ -16,7 +16,9 @@ export default class Paragraphs extends Component {
       paragraphs: [],
       commentEditingParagraphIndex: -1,
       typeEditingParagraphIndex: -1,
-      contextMenuParagraphIndex: -1
+      contextMenuParagraphIndex: -1,
+      insertingParagraph: false,
+      newParagraphValue: ''
     }
     this.componentConstructed = false;
     this.keyUpHandler = this.onKeyUp.bind(this);
@@ -46,7 +48,7 @@ export default class Paragraphs extends Component {
   load(then) {
     API.getParagraphs(this.props.location.query.documentId, (response) => {
       this.components = {paragraphs: {}};
-      this.setState({paragraphs: response.paragraphs}, () => {
+      this.setState({paragraphs: response.paragraphs, insertingParagraph: false, newParagraphValue: ''}, () => {
         this.makeTree();
         this.componentConstructed = true;
         const blocks = document.querySelectorAll('pre code');
@@ -162,7 +164,7 @@ export default class Paragraphs extends Component {
       });
 
       if (this.state.contextMenuParagraphIndex >= 0) {
-        this.setState({contextMenuParagraphIndex: -1});
+        this.setState({contextMenuParagraphIndex: -1, insertingParagraph: false, newParagraphValue: ''});
       }
 
       e.stopPropagation();
@@ -423,7 +425,7 @@ export default class Paragraphs extends Component {
       this.focusedSentence.setFocus(true);
 
       if (this.state.contextMenuParagraphIndex >= 0) {
-        this.setState({contextMenuParagraphIndex: -1});
+        this.setState({contextMenuParagraphIndex: -1, insertingParagraph: false, newParagraphValue: ''});
       }
     }
   }
@@ -504,18 +506,57 @@ export default class Paragraphs extends Component {
   }
 
   onAddParagraphToBelow(index, e) {
+    this.setState({insertingParagraph: true});
+  }
+
+  groups(str, regex, groupToSelect = 0, preserveWhenEmpty = true) {
+    let groups = [];
+    let m;
+    while ((m = regex.exec(str)) !== null) {
+      if (m.index === regex.lastIndex) {
+        regex.lastIndex++;
+      }
+      groups.push(m[groupToSelect]);
+    }
+
+    if (preserveWhenEmpty && groups.length <= 0) {
+      groups.push(str);
+    }
+
+    return groups;
+  }
+
+  onInsertParagraphToBelow(index) {
+    const value = this.state.newParagraphValue;
+    if (!value || value.length <= 0) {
+      return;
+    }
+
+    const sentences = this.groups(value, /\S[^\.:\?]*[\.:\?]/g).map((s) => { return { text: s } });
+    if (!sentences || sentences.length <= 0) {
+      return;
+    }
+
     const currentParagraph = this.state.paragraphs[index];
-    const currentParagraphId = currentParagraph.id;
-    const currentRank = currentParagraph.rank;
+    const position = currentParagraph.position;
+    const rank= currentParagraph.rank;
     const documentId = this.props.location.query.documentId;
     if (!documentId) {
       return;
     }
 
-    API.postParagraphsInsert(documentId, currentParagraphId, currentRank, () => {
+    API.postParagraphsInsert(documentId, sentences, position, rank, () => {
       this.componentConstructed = false;
       this.load();
     });
+  }
+
+  onNewParagraphTextAreaChange(e) {
+    this.setState({newParagraphValue: e.target.value});
+  }
+
+  onCancelNewParagraph(e) {
+    this.setState({insertingParagraph: false, newParagraphValue: ''});
   }
 
   render() {
@@ -539,8 +580,16 @@ export default class Paragraphs extends Component {
                           <ul className='paragraph-menu'>
                             <li>COMMENT</li>
                             <li>EDIT</li>
-                            <li><a onClick={this.onAddParagraphToBelow.bind(this, this.state.contextMenuParagraphIndex)}>ADD BELOW</a></li>
+                            <li><a onClick={this.onAddParagraphToBelow.bind(this, index)}>ADD BELOW</a></li>
                           </ul>
+                        }
+
+                        {this.state.contextMenuParagraphIndex == index && this.state.insertingParagraph ? 
+                          <form className="insert-paragraph">
+                            <textarea value={this.state.newParagraphValue} onChange={this.onNewParagraphTextAreaChange.bind(this)} />
+                              <a onClick={this.onInsertParagraphToBelow.bind(this, index)}>Submit</a>
+                              <a onClick={this.onCancelNewParagraph.bind(this)}>Cancel</a>
+                          </form> : null
                         }
 
                         {this.state.commentEditingParagraphIndex === index ?

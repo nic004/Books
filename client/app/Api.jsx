@@ -39,8 +39,8 @@ class Api {
       .catch(failure);
   }
 
-  postParagraphsInsert(documentId, position, rank, success, failure) {
-    const data = {DocumentId: documentId, position: position, rank: rank};
+  postParagraphsInsert(documentId, sentences, position, rank, success, failure) {
+    const data = {DocumentId: documentId, sentences: sentences, position: position, rank: rank};
     post(`${Api.baseUrl}/paragraphs/insert`, data)
       .then(success)
       .catch(failure);

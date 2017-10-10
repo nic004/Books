@@ -69,10 +69,15 @@ router.post('/insert', (req, res) => {
     data.type = 'PLAIN';
     data.rank += 1;
     models.Paragraph.create(data).then((p) => {
-      const sentence = {text: '***', ParagraphId: p.id};
-      models.Sentence.create(sentence).then((s) => {
+      const sentences = data.sentences;
+      if (sentences) {
+        sentences.forEach((s) => { s.ParagraphId = p.id; });
+        models.Sentence.bulkCreate(sentences).then((ss) => {
+          res.end();
+        });
+      } else {
         res.end();
-      });
+      }
     });
   });
 });
