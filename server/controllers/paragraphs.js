@@ -4,11 +4,12 @@ const express = require('express');
 const models = require('../models');
 const path = require('path');
 const fs = require('fs');
+const Sequelize = require('sequelize');
 
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  models.Paragraph.findAll({where: {DocumentId: req.query.documentId}, include: [{model: models.Sentence, include: [{model: models.Selection}]}], order: ['Paragraph.position', 'Sentences.id']})
+  models.Paragraph.findAll({where: {DocumentId: req.query.documentId}, include: [{model: models.Sentence, include: [{model: models.Selection}]}], order: ['Paragraph.position', 'Paragraph.rank', 'Sentences.id']})
   .then((paragraphs) => {
     res.json({paragraphs: paragraphs});
   });
@@ -63,36 +64,17 @@ router.post('/insert', (req, res) => {
     res.end();
   }
 
-  // TODO: many things ...
-
-  let data = params;
-  data.type = 'PLAIN';
-
-  // let where = `${params.position}.%`;
-  // if (params.position.includes('.')) {
-  //   const floatPos = 
-  //   const positions = p.position.split(".");
-  //   const frontDot = positions[0];
-  //   const underDot = positions[1];
-
-  //   liker = params.position;
-  // }
-
-  // models.Paragraph.findAll({where: {position: {$like: `${params.position}.%`}}, order: ['Paragraph.position']})
-  // .then((paragraphs) => {
-  //   paragraphs.forEach((p) => {
-  //     const positions = p.position.split(".");
-  //     const frontDot = positions[0];
-  //     const underDot = positions[1];
-  //     const pos = parseInt(underDot) + 1;
-  //     console.log(`${frontDot}.${pos}`);
-  //   });
-
+  models.Paragraph.update({rank: Sequelize.literal('rank + 1')}, {where: {DocumentId: params.DocumentId, position: params.position, rank: {$gt: params.rank}}}).then((affectedCount, affectedRows) => {
+    let data = params;
+    data.type = 'PLAIN';
+    data.rank += 1;
     models.Paragraph.create(data).then((p) => {
-      res.end();
+      const sentence = {text: '***', ParagraphId: p.id};
+      models.Sentence.create(sentence).then((s) => {
+        res.end();
+      });
     });
-  // });
-
+  });
 });
 
 router.put('/', (req, res) => {

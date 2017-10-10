@@ -506,12 +506,13 @@ export default class Paragraphs extends Component {
   onAddParagraphToBelow(index, e) {
     const currentParagraph = this.state.paragraphs[index];
     const currentParagraphId = currentParagraph.id;
+    const currentRank = currentParagraph.rank;
     const documentId = this.props.location.query.documentId;
     if (!documentId) {
       return;
     }
 
-    API.postParagraphsInsert(documentId, currentParagraphId, () => {
+    API.postParagraphsInsert(documentId, currentParagraphId, currentRank, () => {
       this.componentConstructed = false;
       this.load();
     });
@@ -527,7 +528,7 @@ export default class Paragraphs extends Component {
             {
               this.state.paragraphs.map((p, index) => {
                 if (p.type !== 'CODE') {
-                  if (p.Sentences) {
+                  if (p.Sentences && p.Sentences.length > 0) {
                     return (
                       <div id={`paragraph-${p.id}`} className={`paragraph ${p.type.toLowerCase()}`} key={index}>
                         {p.Sentences.map((s, si) => {
