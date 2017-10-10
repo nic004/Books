@@ -242,7 +242,6 @@ export default class Paragraphs extends Component {
     if (!this.focusedSentence) {
       return false;
     }
-    
     if (e.ctrlKey && e.keyCode == 87) { // ctrl+w
       // this.props.router.push(`paragraphs/${currentParagraph.id}/edit`);
       this.setState({typeEditingParagraphIndex: this.focusedSentence.paragraph.index});
@@ -618,7 +617,7 @@ export default class Paragraphs extends Component {
               })
             }
           </div>
-          { currentParagraph && this.state.typeEditingParagraphIndex > 0 ?
+          { currentParagraph && this.state.typeEditingParagraphIndex >= 0 ?
             <div className='dialog paragraph-type bg'>
               <div className='content'>
                 <p>SELECT TYPE<a onClick={this.onCloseTypeSelectionDialog.bind(this)}>X</a></p>

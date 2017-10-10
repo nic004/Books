@@ -15,7 +15,6 @@ export default class EditParagraph extends Component {
   }
 
   componentDidMount() {
-    console.log(this.props.params);
     API.getParagraph(this.props.params.id, (response) => {
       this.setState({paragraph: response});
     });
