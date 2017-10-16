@@ -44,7 +44,7 @@ div.paragraphs {
   }
 
   div.content-container {
-    flex: 0 1 800px;
+    flex: 0 1 650px;
     overflow: auto;
     div.content {
       padding-top: 1em;
@@ -159,6 +159,7 @@ div.paragraphs {
           &.has-focus {
             // font-size: 1.5em;
             color: darkmagenta;
+            background-color: bisque;
             font-weight: bold;
           }
           &.edit {
