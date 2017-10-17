@@ -51,7 +51,11 @@ div.paragraphs {
       padding-bottom: 5em;
 
       div.paragraph {
-        line-height: 1.8em;
+        line-height: 2em;
+        font-weight: 300;
+        letter-spacing: 0.6px;
+        text-align: justify;
+        color: #333;
         word-wrap: break-word;
         &:not(:first-child) {
           margin-top: 1em;
@@ -160,7 +164,7 @@ div.paragraphs {
             // font-size: 1.5em;
             color: darkmagenta;
             background-color: bisque;
-            font-weight: bold;
+            // font-weight: 400;
           }
           &.edit {
             display: block;
