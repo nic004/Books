@@ -1,0 +1,9 @@
+#!/bin/bash
+
+NEWFILE="abc.png"
+fname="${NEWFILE%%.*}"
+count=$(find ~/WORK/STUDY/Books/static/images/captures -name "$fname*.png" | wc -l)
+index=$(($count + 1))
+
+cp -v ~/Desktop/$NEWFILE ~/WORK/STUDY/Books/static/images/captures/$fname$index.png
+
