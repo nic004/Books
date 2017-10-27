@@ -12,16 +12,16 @@ export default class ImportParagraphs extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: '',
       results: [],
-      paragraph: null,
-      parsedTexts: []
+      sourceText: '',
+      paragraphs: [],
+      foldImagePreview: false
     }
   }
 
   componentDidMount() {
     API.getCaptures((response) => {
-      const items = response.urls.map((url) => { return {image: url}; });
+      const items = response.urls.map((url) => { return {image: url, selected: false}; });
       this.setState({results: items});
     });
   }
@@ -59,18 +59,18 @@ export default class ImportParagraphs extends Component {
       .then(parseBlob);
   };
 
-  onParseImage(imageUrl, index, e) {
+  onParseImage(imageUrl, index, then) {
     fetch(imageUrl)
       .then(this.processStatus)
       .then(this.blob)
       .then((blob) => {
         this.blobToBase64(blob, (base64) => {
-          this.parseBlob(base64, index);
+          this.parseBlob(base64, index, then);
         });
       });
   }
 
-  parseBlob(base64, index) {
+  parseBlob(base64, index, then) {
     var formData = new FormData();
     formData.append('base64Image', base64);
     formData.append('apikey', OCR_API_KEY);
@@ -85,10 +85,8 @@ export default class ImportParagraphs extends Component {
       const resultTexts = json.ParsedResults.map((item) => { 
         return this.paragraph(item.ParsedText); 
       }).join('\n\n');//.split('&&&');
-      // this.paragraphJson(resultTexts);
-      // const newResults = update(this.state.results, {[index]: {sourceText: {$set: resultTexts}}});
-      // this.setState({results: newResults});
-      this.onParagraphChange(index, resultTexts);
+      // this.onParagraphChange(index, resultTexts);
+      then(resultTexts);
     });
   }
 
@@ -116,8 +114,8 @@ export default class ImportParagraphs extends Component {
     return groups;
   }
 
-  onParagraphChange(index, e) {
-    const value = e.target ? e.target.value : e;
+  onParagraphChange(e) {
+    const value = e ? (e.target ? e.target.value : e) : this.state.sourceText;
     const documentId = this.props.location.query.documentId;
 
     // const regexCode = /{code}\n*((.|\n)+)\n*{\/code}/g;
@@ -135,10 +133,11 @@ export default class ImportParagraphs extends Component {
       return {type: 'PLAIN', sentences: sentences, DocumentId: documentId};
     });
 
-      console.log(paragraphs);
+    console.log(paragraphs);
 
-      const newResults = update(this.state.results, {[index]: {sourceText: {$set: value}, paragraphs: {$set: paragraphs}}});
-      this.setState({results: newResults});
+      // const newResults = update(this.state.results, {[index]: {sourceText: {$set: value}, paragraphs: {$set: paragraphs}}});
+      // this.setState({results: newResults});
+      this.setState({sourceText: value, paragraphs: paragraphs});
 
     // this.setState({value: e.target.value, paragraphs: paragraphs}, () => {
     //   const blocks = document.querySelectorAll('pre code');
@@ -162,17 +161,52 @@ export default class ImportParagraphs extends Component {
   }
 
   onSubmit(index, e) {
-    const paragraphs = this.state.results[index].paragraphs;
+    const paragraphs = this.state.paragraphs;
     if (!paragraphs) {
       return;
     }
 
     API.postParagraphs(paragraphs, () => {
       // this.props.router.push(`paragraphs?documentId=${this.props.location.query.documentId}`);
+      this.setState({sourceText: '', paragraphs: []});
+      alert('저장완료');
     }, (error) => {
       alert('데이터 저장 중 에러가 발생하였습니다.');
       console.log(error);
     });
+  }
+
+  onSelectImage(index, e) {
+    const current = this.state.results[index].selected;
+    const newResults = update(this.state.results, {[index]: {selected: {$set: !current}}});
+    this.setState({results: newResults});
+  }
+
+  onParseSelected(e) {
+    this.parseFirstSelectedImage();
+  }
+
+  parseFirstSelectedImage() {
+    const selectedIndex = this.state.results.findIndex((item) => { return item.selected; });
+    if (selectedIndex < 0) {
+      this.onParagraphChange();
+      return;
+    }
+
+    const selectedItem = this.state.results[selectedIndex];
+    this.onParseImage(selectedItem.image, selectedIndex, (resultTexts) => {
+      const newResults = update(this.state.results, { [selectedIndex]: { selected: { $set: false } } });
+      const newSourceText = this.state.sourceText + '\n\n<<<<< Parsed Item >>>>>\n' + resultTexts;
+      this.setState({results: newResults, sourceText: newSourceText}, () => {
+        console.log('----------------------------');
+        console.log(resultTexts);
+        this.parseFirstSelectedImage();
+      });
+    });
+  }
+
+  onFold() {
+    this.setState({foldImagePreview: !this.state.foldImagePreview});
   }
 
   render() {
@@ -180,28 +214,37 @@ export default class ImportParagraphs extends Component {
     return (
       <div className='import-paragraphs'>
         <section>Import Paragraphs</section>
-        <section> 
-          {this.state.results.map((item, index) => {
-            const sourceText = item.sourceText;
-            const paragraphs = item.paragraphs;
-            return (
-              <div className='row' key={index}>
-                <div className='column source'>
+        <section className={`source-images ${this.state.foldImagePreview ? 'folded' : ''}`}> 
+          <div className='row'>
+            {this.state.results.map((item, index) => {
+              const sourceText = item.sourceText;
+              const paragraphs = item.paragraphs;
+              return (
+                <div className={`column source ${item.selected ? 'selected' : ''}`} onClick={this.onSelectImage.bind(this, index)}>
                   <img className='capture' src={item.image} />
-                  <a onClick={this.onParseImage.bind(this, item.image, index)}>parse</a>
-                  <a onClick={this.onSubmit.bind(this, index)}>submit</a>
                 </div>
-                <div className='column result'>
-                  {!sourceText ? null : <textarea value={sourceText} onChange={this.onParagraphChange.bind(this, index)} />}
-                  {!paragraphs ? null : 
-                    <div className='preview'>
-                      {paragraphs.map((p, i) => { return this.paragraphMarkup(p, i); })}
-                    </div>
-                  }
-                </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
+        </section>
+
+        <section className='import-menus'>
+          <div>
+            <a onClick={this.onParseSelected.bind(this)}>PARSE</a>
+            <a onClick={this.onSubmit.bind(this)}>SUBMIT</a>
+            <a onClick={this.onFold.bind(this)}>{this.state.foldImagePreview ? 'UNFOLD': 'FOLD'}</a>
+          </div>
+        </section>
+
+        <section className='parsed'>
+          <div className='container'>
+            <div className='column editor'>
+              <textarea value={this.state.sourceText} onChange={this.onParagraphChange.bind(this)} />
+            </div>
+            <div className='column preview'>
+              {this.state.paragraphs.map((p, i) => { return this.paragraphMarkup(p, i); })}
+            </div>
+          </div>
         </section>
       </div>
     );
