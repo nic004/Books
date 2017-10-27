@@ -7,6 +7,7 @@ import hljs from 'highlight';
 import 'highlight/styles/atom-one-light.css';
 import scrollToElement from 'scroll-to-element';
 import Sentence from './Sentence.jsx';
+import EditParagraph from './EditParagraph.jsx';
 
 export default class Paragraphs extends Component {
   constructor(props) {
@@ -17,6 +18,7 @@ export default class Paragraphs extends Component {
       commentEditingParagraphIndex: -1,
       typeEditingParagraphIndex: -1,
       contextMenuParagraphIndex: -1,
+      editingParagraphIndex: -1,
       insertingParagraph: false,
       newParagraphValue: ''
     }
@@ -504,6 +506,10 @@ export default class Paragraphs extends Component {
     }
   }
 
+  onEditParagraph(index, e) {
+    this.setState({editingParagraphIndex: index});
+  }
+
   onAddParagraphToBelow(index, e) {
     this.setState({insertingParagraph: true});
   }
@@ -558,6 +564,10 @@ export default class Paragraphs extends Component {
     this.setState({insertingParagraph: false, newParagraphValue: ''});
   }
 
+  onCloseEditParagraph() {
+    this.setState({editingParagraphIndex: -1});
+  }
+
   render() {
     const currentParagraph = this.focusedSentence ? this.state.paragraphs[this.focusedSentence.paragraph.index] : null;
     return (
@@ -578,7 +588,7 @@ export default class Paragraphs extends Component {
                         {this.state.contextMenuParagraphIndex != index ? null : 
                           <ul className='paragraph-menu'>
                             <li>COMMENT</li>
-                            <li>EDIT</li>
+                            <li><a onClick={this.onEditParagraph.bind(this, index)}>EDIT</a></li>
                             <li><a onClick={this.onAddParagraphToBelow.bind(this, index)}>ADD BELOW</a></li>
                           </ul>
                         }
@@ -630,6 +640,7 @@ export default class Paragraphs extends Component {
             </div> : null
           }
         </div>
+        { this.state.editingParagraphIndex >= 0 ? <EditParagraph paragraph={currentParagraph} onClose={this.onCloseEditParagraph.bind(this)} /> : null }
       </div>
     );
   }

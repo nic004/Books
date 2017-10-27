@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, PropTypes} from 'react';
 import {Router, browserHistory} from 'react-router';
 import Dropdown from 'react-dropdown';
 import update from 'react-addons-update';
@@ -10,24 +10,32 @@ export default class EditParagraph extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      paragraph: null
+      paragraph: props.paragraph
     }
   }
 
   componentDidMount() {
-    API.getParagraph(this.props.params.id, (response) => {
-      this.setState({paragraph: response});
-    });
+    // API.getParagraph(this.props.params.id, (response) => {
+    //   this.setState({paragraph: response});
+    // });
   }
 
   onSave(e) {
     e.preventDefault();
     API.putParagraph(this.state.paragraph, () => {
+      if (this.props.onClose) {
+        this.props.onClose();
+        return;
+      }
       browserHistory.push(`/paragraphs?documentId=${this.state.paragraph.DocumentId}&paragraphId=${this.state.paragraph.id}`);
     });
   }
 
   onCancel() {
+    if (this.props.onClose) {
+      this.props.onClose();
+      return;
+    }
     browserHistory.goBack();
   }
 
@@ -72,7 +80,7 @@ export default class EditParagraph extends Component {
                 })
               }
               <div className='new-sentence'>
-                <a onClick={this.onNewSentence.bind(this)} className='new-sentence'>ADD</a> 
+                <a onClick={this.onNewSentence.bind(this)} className='new-sentence'>ADD</a>
               </div>
             </div>
           }
@@ -85,3 +93,11 @@ export default class EditParagraph extends Component {
     );
   }
 }
+
+EditParagraph.propTypes = {
+  paragraph: PropTypes.object.isRequired,
+  onClose: PropTypes.func
+  // sentence: PropTypes.object.isRequired,
+  // didUpdateSentence: PropTypes.func.isRequired,
+  // onClickSentence: PropTypes.func.isRequired
+};
