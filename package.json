@@ -69,6 +69,7 @@
     "nodemon": "^1.11.0",
     "react": "^15.0.2",
     "react-addons-update": "^15.5.2",
+    "react-autosize-textarea": "^0.4.9",
     "react-dom": "^15.0.2",
     "react-dropdown": "^1.2.5",
     "react-redux": "^5.0.2",

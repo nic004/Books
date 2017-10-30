@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import update from 'react-addons-update';
+import TextareaAutosize from 'react-autosize-textarea';
 import API from 'books/Api.jsx';
 import {post} from 'books/utils/Utils.jsx';
 import hljs from 'highlight';
@@ -239,7 +240,7 @@ export default class ImportParagraphs extends Component {
         <section className='parsed'>
           <div className='container'>
             <div className='column editor'>
-              <textarea value={this.state.sourceText} onChange={this.onParagraphChange.bind(this)} />
+              <TextareaAutosize rows={17} value={this.state.sourceText} onChange={this.onParagraphChange.bind(this)} />
             </div>
             <div className='column preview'>
               {this.state.paragraphs.map((p, i) => { return this.paragraphMarkup(p, i); })}
