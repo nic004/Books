@@ -40,7 +40,7 @@ router.get('/captures', (req, res) => {
 });
 
 router.get('/:id', (req, res) => {
-  models.Paragraph.findAll({where: {id: req.params.id}, include: [{model: models.Sentence}], order: ['Paragraph.id', 'Sentences.id']})
+  models.Paragraph.findAll({where: {id: req.params.id}, include: [{model: models.Sentence, include: [{model: models.Selection}]}], order: ['Paragraph.id', 'Sentences.id']})
   .then((paragraphs) => {
     res.json(paragraphs[0]);
   });
@@ -108,7 +108,11 @@ router.put('/', (req, res) => {
       paragraph.Sentences.forEach((sentence, index) => {
         const doOnLast = () => {
           if (index == paragraph.Sentences.length - 1) {
+            console.log(p);
             res.end();
+            // models.Paragraph.findById(paragraph.id, {include: [{model: models.Sentence, include: [{model: models.Selection}]}], order: ['Sentences.id']}).then((result) => {
+            //   res.json(result);
+            // });
           }
         };
         if (!sentence['id']) {

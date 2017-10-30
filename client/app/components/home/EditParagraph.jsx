@@ -24,7 +24,9 @@ export default class EditParagraph extends Component {
     e.preventDefault();
     API.putParagraph(this.state.paragraph, () => {
       if (this.props.onClose) {
-        this.props.onClose();
+        API.getParagraph(this.state.paragraph.id, (p) => {
+          this.props.onClose(p);
+        });
         return;
       }
       browserHistory.push(`/paragraphs?documentId=${this.state.paragraph.DocumentId}&paragraphId=${this.state.paragraph.id}`);

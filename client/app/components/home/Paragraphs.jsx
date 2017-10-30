@@ -199,9 +199,11 @@ export default class Paragraphs extends Component {
     }
     
     if (e.ctrlKey && e.keyCode == 69) { // ctrl+e
+
       const currentParagraphObject = this.focusedSentence.paragraph;
-      const currentParagraph = this.state.paragraphs[currentParagraphObject.index]
-      this.props.router.push(`paragraphs/${currentParagraph.id}/edit`);
+      this.setState({ editingParagraphIndex: currentParagraphObject.index });
+      // const currentParagraph = this.state.paragraphs[currentParagraphObject.index]
+      // this.props.router.push(`paragraphs/${currentParagraph.id}/edit`);
       return true;
     }
     return false;
@@ -564,8 +566,13 @@ export default class Paragraphs extends Component {
     this.setState({insertingParagraph: false, newParagraphValue: ''});
   }
 
-  onCloseEditParagraph() {
-    this.setState({editingParagraphIndex: -1});
+  onCloseEditParagraph(paragraph) {
+    if (paragraph) {
+      const paragraphs = update(this.state.paragraphs, { [this.state.editingParagraphIndex]: { $set: paragraph } });
+      this.setState({ paragraphs: paragraphs, editingParagraphIndex: -1 });
+    } else {
+      this.setState({ editingParagraphIndex: -1 });
+    }
   }
 
   render() {
