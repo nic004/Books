@@ -197,9 +197,8 @@ export default class Paragraphs extends Component {
     if (!this.focusedSentence) {
       return false;
     }
-    
-    if (e.ctrlKey && e.keyCode == 69) { // ctrl+e
 
+    if (e.ctrlKey && e.keyCode == 69) { // ctrl+e
       const currentParagraphObject = this.focusedSentence.paragraph;
       this.setState({ editingParagraphIndex: currentParagraphObject.index });
       // const currentParagraph = this.state.paragraphs[currentParagraphObject.index]
