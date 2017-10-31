@@ -645,8 +645,8 @@ export default class Paragraphs extends Component {
               </div>
             </div> : null
           }
+          { this.state.editingParagraphIndex >= 0 ? <EditParagraph paragraph={currentParagraph} onClose={this.onCloseEditParagraph.bind(this)} /> : null }
         </div>
-        { this.state.editingParagraphIndex >= 0 ? <EditParagraph paragraph={currentParagraph} onClose={this.onCloseEditParagraph.bind(this)} /> : null }
       </div>
     );
   }
