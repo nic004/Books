@@ -214,20 +214,6 @@ export default class ImportParagraphs extends Component {
     let codeIndex = 0;
     return (
       <div className='import-paragraphs'>
-        <section>Import Paragraphs</section>
-        <section className={`source-images ${this.state.foldImagePreview ? 'folded' : ''}`}> 
-          <div className='row'>
-            {this.state.results.map((item, index) => {
-              const sourceText = item.sourceText;
-              const paragraphs = item.paragraphs;
-              return (
-                <div className={`column source ${item.selected ? 'selected' : ''}`} onClick={this.onSelectImage.bind(this, index)}>
-                  <img className='capture' src={item.image} />
-                </div>
-              );
-            })}
-          </div>
-        </section>
 
         <section className='import-menus'>
           <div>
@@ -237,16 +223,29 @@ export default class ImportParagraphs extends Component {
           </div>
         </section>
 
-        <section className='parsed'>
-          <div className='container'>
-            <div className='column editor'>
-              <TextareaAutosize rows={17} value={this.state.sourceText} onChange={this.onParagraphChange.bind(this)} />
+        <section className={`source-images`}> 
+          <div className={`images  ${this.state.foldImagePreview ? 'folded' : ''}`}>
+            {this.state.results.map((item, index) => {
+              const sourceText = item.sourceText;
+              const paragraphs = item.paragraphs;
+              return (
+                <div className={`image column source ${item.selected ? 'selected' : ''}`} onClick={this.onSelectImage.bind(this, index)}>
+                  <img className='capture' src={item.image} />
+                </div>
+              );
+            })}
+          </div>
+
+          <div className={`parsed ${this.state.foldImagePreview ? 'folded' : ''}`}>
+            <div className='editor'>
+              <TextareaAutosize rows={31} value={this.state.sourceText} onChange={this.onParagraphChange.bind(this)} />
             </div>
             <div className='column preview'>
               {this.state.paragraphs.map((p, i) => { return this.paragraphMarkup(p, i); })}
             </div>
           </div>
         </section>
+
       </div>
     );
   }
