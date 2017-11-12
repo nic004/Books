@@ -1,7 +1,7 @@
 div.paragraphs {
-  display: flex;
-  flex-direction: row;
-  max-width: 1324px;
+  // display: flex;
+  // flex-direction: row;
+  // max-width: 1324px;
   // margin-left: auto;
   // margin-right: auto;
   position: relative;
@@ -20,9 +20,10 @@ div.paragraphs {
   }
 
   div.outline-container {
-    flex: 0 1 300px;
+    // flex: 0 1 300px;
     min-width: 0;
     position: relative;
+    width: 330px;
     ul.outline {
       font-size: 0.8em;
       line-height: 1.5em;
