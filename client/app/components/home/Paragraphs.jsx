@@ -20,7 +20,8 @@ export default class Paragraphs extends Component {
       contextMenuParagraphIndex: -1,
       editingParagraphIndex: -1,
       insertingParagraph: false,
-      newParagraphValue: ''
+      newParagraphValue: '',
+      outlineMode: true
     }
     this.componentConstructed = false;
     this.keyUpHandler = this.onKeyUp.bind(this);
@@ -495,6 +496,9 @@ export default class Paragraphs extends Component {
           <li className='outline-item append-paragraph'>
             <Link to={`paragraphs/import?documentId=${this.props.location.query.documentId}`}>> 이미지 로딩</Link>
           </li>
+          <li className='outline-item append-paragraph'>
+            <a>> 선택된 문장만 보기</a>
+          </li>
           {headers.map((p) => <li key={p.id} className={`outline-item ${p.type.toLowerCase()}`}><a onClick={this.onClickOutline.bind(this, p)}>{p.Sentences[0].text}</a></li>)}
         </ul>
       </div>
@@ -574,8 +578,35 @@ export default class Paragraphs extends Component {
     }
   }
 
+  renderOutlineMode() {
+    return (
+      <div className="paragraphs">
+        {this.outlineDiv()}
+        <div className="content-container">
+          <div className="content">
+            {
+              this.state.paragraphs.filter((p) => { return (p.Sentences && p.Sentences.length > 0) }).map((p, index) => {
+                return (
+                  <div id={`paragraph-${p.id}`} className={`paragraph ${p.type.toLowerCase()}`} key={index}>
+                    {p.Sentences.map((s, si) => {
+                      return <Sentence key={si} sentence={s} ref={this.addSentenceComponent.bind(this, index, si)} didUpdateSentence={this.didUpdateSentence.bind(this)} onClickSentence={this.onClickSentence.bind(this)} />
+                    })}
+                  </div>
+                );
+              })
+            }
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   render() {
     const currentParagraph = this.focusedSentence ? this.state.paragraphs[this.focusedSentence.paragraph.index] : null;
+    if (this.state.outlineMode) {
+      return this.renderOutlineMode();
+    }
+
     return (
       <div className="paragraphs">
         {this.outlineDiv()}
