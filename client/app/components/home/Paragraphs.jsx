@@ -21,7 +21,7 @@ export default class Paragraphs extends Component {
       editingParagraphIndex: -1,
       insertingParagraph: false,
       newParagraphValue: '',
-      outlineMode: true
+      outlineMode: false
     }
     this.componentConstructed = false;
     this.keyUpHandler = this.onKeyUp.bind(this);
@@ -497,12 +497,17 @@ export default class Paragraphs extends Component {
             <Link to={`paragraphs/import?documentId=${this.props.location.query.documentId}`}>> 이미지 로딩</Link>
           </li>
           <li className='outline-item append-paragraph'>
-            <a>> 선택된 문장만 보기</a>
+            <a onClick={this.toggleOutlineMode.bind(this)}>> {this.state.outlineMode ? '전체 문장 보기' : '선택된 문장만 보기'}</a>
           </li>
           {headers.map((p) => <li key={p.id} className={`outline-item ${p.type.toLowerCase()}`}><a onClick={this.onClickOutline.bind(this, p)}>{p.Sentences[0].text}</a></li>)}
         </ul>
       </div>
     );
+  }
+
+  toggleOutlineMode() {
+    const newMode = !this.state.outlineMode;
+    this.setState({outlineMode: newMode});
   }
 
   onResizeWindow() {
@@ -579,17 +584,33 @@ export default class Paragraphs extends Component {
   }
 
   renderOutlineMode() {
+    const isTitleParagraph = (p) => {
+      return ['H1', 'H2', 'H3'].includes(p.type);
+    }
+
+    const hasSelectedSenteces = (p) => {
+      if (!p.Sentences || p.Sentences.length <= 0) {
+        return false;
+      }
+
+      const selectionCount = p.Sentences.filter((s) => {
+        return (s.Selections && s.Selections.length > 0)
+      }).length;
+
+      return isTitleParagraph(p) || selectionCount > 0;
+    }
+
     return (
       <div className="paragraphs">
         {this.outlineDiv()}
         <div className="content-container">
           <div className="content">
             {
-              this.state.paragraphs.filter((p) => { return (p.Sentences && p.Sentences.length > 0) }).map((p, index) => {
+              this.state.paragraphs.filter(hasSelectedSenteces).map((p, index) => {
                 return (
                   <div id={`paragraph-${p.id}`} className={`paragraph ${p.type.toLowerCase()}`} key={index}>
-                    {p.Sentences.map((s, si) => {
-                      return <Sentence key={si} sentence={s} ref={this.addSentenceComponent.bind(this, index, si)} didUpdateSentence={this.didUpdateSentence.bind(this)} onClickSentence={this.onClickSentence.bind(this)} />
+                    {p.Sentences.filter((s) => { return isTitleParagraph(p) || (s.Selections && s.Selections.length > 0) }).map((s, si) => {
+                      return <Sentence key={si} sentence={s} outlineMode={true} />
                     })}
                   </div>
                 );

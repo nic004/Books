@@ -147,6 +147,15 @@ export default class Sentence extends Component {
       }
     }
 
+    if (this.props.outlineMode) {
+      return (
+
+        <div className={`sentence`} ref={(c) => { this.sentenceElement = c }}>
+          {texts.map((t) => <span className={`${t.selected ? 'selected' : ''}`} ref={(c) => {this.textSpan = c}}>{t.text}</span>)}
+        </div>
+      );
+    }
+
     return (
       <div className={`sentence ${this.state.hasFocus ? 'has-focus' : ''} ${this.state.editMode ? 'edit' : ''}`} 
            ref={(c) => { this.sentenceElement = c }} 
@@ -169,6 +178,7 @@ export default class Sentence extends Component {
 
 Sentence.propTypes = {
   sentence: PropTypes.object.isRequired,
-  didUpdateSentence: PropTypes.func.isRequired,
-  onClickSentence: PropTypes.func.isRequired
+  didUpdateSentence: PropTypes.func,
+  onClickSentence: PropTypes.func,
+  outlineMode: PropTypes.bool
 };
