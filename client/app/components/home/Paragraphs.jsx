@@ -340,6 +340,13 @@ export default class Paragraphs extends Component {
       return;
     }
 
+    if (this.state.editingParagraphIndex >= 0) {
+      if (e.key === 'Escape') {
+        this.setState({editingParagraphIndex: -1});
+      }
+      return;
+    }
+
     if (this.focusedSentence && this.focusedSentence.isEditMode()) {
       if (e.key === 'Escape') {
         this.focusedSentence.edit(false);
